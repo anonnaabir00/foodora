@@ -25,7 +25,7 @@ export default function Header() {
                     <div className="row">
                         <div className="header_sec">
                             <div className="logo">
-                                <a href="#">
+                                <a href="/">
                                     <Image src="/images/Vector-1.png" alt="Logo" width={100} height={50} />
                                 </a>
                             </div>

@@ -1,63 +1,138 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { Spin } from 'antd';
+import { useRouter } from 'next/navigation';
 
 export default function LocationSearch() {
-    const [query, setQuery] = useState(''); // State for search input
-    const [suggestions, setSuggestions] = useState([]); // State for API suggestions
-    const [loading, setLoading] = useState(false); // State for loading indicator
+    const router = useRouter();
+    const [query, setQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [fetchingLocation, setFetchingLocation] = useState(false);
 
     // Function to fetch suggestions from the API
     const fetchSuggestions = async (searchQuery) => {
         if (!searchQuery) {
-            setSuggestions([]); // Clear suggestions if the query is empty
+            setSuggestions([]);
             return;
         }
 
-        setLoading(true); // Show loading indicator
+        setLoading(true);
         try {
             const response = await fetch(
                 `https://foodora-api-a713.onrender.com/fetch/location?query=${searchQuery}`
             );
 
-            // Check if the response is OK (status code 200-299)
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log(data);
 
-            // Check if the response is an array
             if (!Array.isArray(data)) {
                 throw new Error('Invalid API response structure: Expected an array');
             }
 
-            // Set the suggestions directly (no need to map since the response is already in the correct format)
             setSuggestions(data);
         } catch (error) {
             console.error('Error fetching suggestions:', error);
-            setSuggestions([]); // Clear suggestions on error
+            setSuggestions([]);
         } finally {
-            setLoading(false); // Hide loading indicator
+            setLoading(false);
         }
     };
 
-    // Debounce the API call to avoid excessive requests
+    // Debounce the API call
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             fetchSuggestions(query);
-        }, 300); // 300ms delay
+        }, 300);
 
-        return () => clearTimeout(delayDebounceFn); // Cleanup timeout
+        return () => clearTimeout(delayDebounceFn);
     }, [query]);
+
+    // Handle suggestion selection
+    const handleSuggestionClick = (suggestion) => {
+        setQuery(suggestion.description);
+        console.log('Selected Suggestion:', suggestion);
+
+        const selectedLocation = {
+            description: suggestion.description,
+            place_id: suggestion.place_id,
+        };
+
+        Cookies.set('selectedLocation', JSON.stringify(selectedLocation), { expires: 7 });
+    };
+
+    // Handle "Essen Finden" button click
+    const handleEssenFindenClick = async () => {
+        const selectedLocation = Cookies.get('selectedLocation');
+
+        if (!selectedLocation) {
+            alert('No location selected. Please select a location first.');
+            return;
+        }
+
+        const { place_id } = JSON.parse(selectedLocation);
+
+        setFetchingLocation(true);
+
+        try {
+            // Step 1: Fetch lat and lng using place_id
+            const locationResponse = await fetch(
+                `https://foodora-api-a713.onrender.com/fetch/latlng?place_id=${place_id}`
+            );
+
+            if (!locationResponse.ok) {
+                throw new Error(`HTTP error! Status: ${locationResponse.status}`);
+            }
+
+            const locationData = await locationResponse.json();
+            console.log('Fetched Lat and Lng:', locationData);
+
+            // Save location data to cookie
+            const locationCookieData = {
+                formatted_address: locationData.formatted_address,
+                place_id: locationData.place_id,
+                location: {
+                    lat: locationData.location.lat,
+                    lng: locationData.location.lng,
+                },
+            };
+
+            Cookies.set('locationData', JSON.stringify(locationCookieData), { expires: 7 });
+            console.log('Location data saved to cookie:', locationCookieData);
+
+            // Redirect immediately after setting the cookie
+            router.push("/resturants");
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            alert('Failed to fetch data. Please try again.');
+        } finally {
+            setFetchingLocation(false);
+        }
+    };
 
     return (
         <div className="search_field">
+            {fetchingLocation && (
+                <div className="fullscreen-overlay">
+                    <div className="loader-content">
+                        <Spin size="large" />
+                        <p>Getting Location...</p>
+                    </div>
+                </div>
+            )}
+
             <div className="row">
                 <div className="col-md-8">
                     <form
                         className="e-search-form"
-                        onSubmit={(e) => e.preventDefault()} // Prevent form submission
+                        onSubmit={(e) => e.preventDefault()}
                     >
                         <div className="e-search-input-wrapper">
                             <input
@@ -66,19 +141,18 @@ export default function LocationSearch() {
                                 className="e-search-input"
                                 type="search"
                                 value={query}
-                                onChange={(e) => setQuery(e.target.value)} // Update query state
+                                onChange={(e) => setQuery(e.target.value)}
                             />
-                            {/* Show loading indicator */}
                             {loading && <span>Loading...</span>}
-                            {/* Display suggestions */}
+
                             {suggestions.length > 0 && (
                                 <ul className="suggestions-list">
                                     {suggestions.map((suggestion, index) => (
                                         <li
                                             key={index}
-                                            onClick={() => setQuery(suggestion.description)} // Set suggestion as query
+                                            onClick={() => handleSuggestionClick(suggestion)}
                                         >
-                                            {suggestion.description} {/* Display description */}
+                                            {suggestion.description}
                                         </li>
                                     ))}
                                 </ul>
@@ -110,9 +184,13 @@ export default function LocationSearch() {
                     </form>
                 </div>
                 <div className="col-md-4">
-                    <a href="#" className="banner_button">
+                    <button
+                        className="banner_button"
+                        onClick={handleEssenFindenClick}
+                        disabled={fetchingLocation}
+                    >
                         <span>Essen Finden</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
