@@ -107,7 +107,7 @@ export default function LocationSearch() {
             console.log('Location data saved to cookie:', locationCookieData);
 
             // Redirect immediately after setting the cookie
-            router.push("/resturants");
+            router.push("/restaurants");
 
         } catch (error) {
             console.error('Error fetching data:', error);

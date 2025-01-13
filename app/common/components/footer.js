@@ -10,7 +10,7 @@ export default function Footer() {
                     <div className="row">
                         <div className="col-md-3">
                             <div className="footer-logo">
-                                <a href="#"><Image src="/images/footer-logo.png" alt="Logo" width={100} height={50} /></a>
+                                <a href="#"><img src="/images/footer-logo.png"/></a>
                             </div>
                         </div>
                         <div className="col-md-8 popular-cuisines-clm">
@@ -27,7 +27,42 @@ export default function Footer() {
                                         <li><a href="#">Halal</a></li>
                                     </ul>
                                 </div>
-                                {/* Add more columns as needed */}
+                                <div className="col-md-3">
+                                    <ul className="cuisines-list">
+                                        <li><a href="#">Sushi</a></li>
+                                        <li><a href="#">Pizza</a></li>
+                                        <li><a href="#">Indian</a></li>
+                                        <li><a href="#">Asian</a></li>
+                                        <li><a href="#">Burger</a></li>
+                                        <li><a href="#">Mexican</a></li>
+                                        <li><a href="#">Italian</a></li>
+                                        <li><a href="#">Halal</a></li>
+                                    </ul>
+                                </div>
+                                <div className="col-md-3">
+                                    <ul className="cuisines-list">
+                                        <li><a href="#">Sushi</a></li>
+                                        <li><a href="#">Pizza</a></li>
+                                        <li><a href="#">Indian</a></li>
+                                        <li><a href="#">Asian</a></li>
+                                        <li><a href="#">Burger</a></li>
+                                        <li><a href="#">Mexican</a></li>
+                                        <li><a href="#">Italian</a></li>
+                                        <li><a href="#">Halal</a></li>
+                                    </ul>
+                                </div>
+                                <div className="col-md-3">
+                                    <ul className="cuisines-list">
+                                        <li><a href="#">Sushi</a></li>
+                                        <li><a href="#">Pizza</a></li>
+                                        <li><a href="#">Indian</a></li>
+                                        <li><a href="#">Asian</a></li>
+                                        <li><a href="#">Burger</a></li>
+                                        <li><a href="#">Mexican</a></li>
+                                        <li><a href="#">Italian</a></li>
+                                        <li><a href="#">Halal</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -38,13 +73,13 @@ export default function Footer() {
                     <div className="row">
                         <div className="col-md-6">
                             <div className="footer-bottom-logo">
-                                <Image src="/images/footer-bottom-logo.png" alt="Logo" width={100} height={50} />
+                                <img src="/images/footer-bottom-logo.png"/>
                             </div>
                         </div>
                         <div className="col-md-6 social-logos">
                             <div className="footer-social-logo">
-                                <a href=""><Image src="/images/fb-icon.png" alt="Facebook" width={24} height={24} /></a>
-                                <a href=""><Image src="/images/insta-icon.png" alt="Instagram" width={24} height={24} /></a>
+                                <a href=""><img src="/images/fb-icon.png"/></a>
+                                <a href=""><img src="/images/insta-icon.png"/></a>
                             </div>
                         </div>
                     </div>

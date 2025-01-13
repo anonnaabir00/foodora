@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import LocationSearch from "@/app/index/components/child/LocationSearch";
 
 export default function Hero() {
@@ -13,10 +14,10 @@ export default function Hero() {
                 </div>
                 <div className="col-md-5 banner-img-wrap">
                     <div className="banner_img desktop-img">
-                        {/*<Image src="/images/Group-240.png" alt="Banner" width={500} height={400} />*/}
+                        <img src="/images/Group-240.png"/>
                     </div>
                     <div className="banner_img mobile-img">
-                        {/*<Image src="/images/mobile-banner.png" alt="Banner" width={300} height={200} />*/}
+                        <img src="/images/mobile-banner.png"/>
                     </div>
                 </div>
             </div>

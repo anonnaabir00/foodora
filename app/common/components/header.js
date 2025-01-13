@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import Link from 'next/link'
 
 export default function Header() {
     return (
@@ -10,12 +10,12 @@ export default function Header() {
                     <div className="row">
                         <div className="col">
                             <div className="top_text">
-                                <Image src="/images/fi_10252887.png" alt="Icon" width={24} height={24} />
+                                <img src="/images/fi_10252887.png"/>
                                 <p>Lorem ipsum dolor sit amet consectetur.</p>
                             </div>
                         </div>
                         <div className="top_close">
-                            <Image src="/images/Close.png" alt="Close" width={24} height={24} />
+                            <img src="/images/Close.png"/>
                         </div>
                     </div>
                 </div>
@@ -25,15 +25,15 @@ export default function Header() {
                     <div className="row">
                         <div className="header_sec">
                             <div className="logo">
-                                <a href="/">
-                                    <Image src="/images/Vector-1.png" alt="Logo" width={100} height={50} />
-                                </a>
+                                <Link href="/">
+                                    <img src="/images/Vector-1.png"/>
+                                </Link>
                             </div>
                             <div className="login_button">
                                 <button className="sign_up" onClick={() => console.log('Sign Up')}>Sign Up</button>
                                 <button className="log_in" onClick={() => console.log('Log In')}>Log In</button>
                                 <button className="popup-btn" onClick={() => console.log('Open Cart')}>
-                                    <Image src="/images/cart-button.png" alt="Cart" width={24} height={24} />
+                                    <img src="/images/cart-button.png"/>
                                 </button>
                             </div>
                         </div>

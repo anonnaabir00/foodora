@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
+import './main.css';
 import { Inter } from 'next/font/google';
 import Header from "@/app/common/components/header";
 import Footer from "@/app/common/components/footer";
