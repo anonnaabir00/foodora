@@ -42,7 +42,7 @@ export default function RestaurantDetail() {
                     const { lat, lng } = location;
 
                     // Fetch menu data using the URL restaurant ID
-                    const menuResponse = await fetch(`https://foodora-api.iamabir.com/fetch/menu?&lat=${lat}&lng=${lng}&restaurantId=${params.id}`);
+                    const menuResponse = await fetch(`https://skymaxfiber.co.in/fetch/menu?&lat=${lat}&lng=${lng}&restaurantId=${params.id}`);
                     if (!menuResponse.ok) {
                         throw new Error('Failed to fetch menu');
                     }
