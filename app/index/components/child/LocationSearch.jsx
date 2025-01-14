@@ -22,7 +22,7 @@ export default function LocationSearch() {
         setLoading(true);
         try {
             const response = await fetch(
-                `https://foodora-api-a713.onrender.com/fetch/location?query=${searchQuery}`
+                `https://foodora-api.iamabir.com/fetch/location?query=${searchQuery}`
             );
 
             if (!response.ok) {
@@ -83,7 +83,7 @@ export default function LocationSearch() {
         try {
             // Step 1: Fetch lat and lng using place_id
             const locationResponse = await fetch(
-                `https://foodora-api-a713.onrender.com/fetch/latlng?place_id=${place_id}`
+                `https://foodora-api.iamabir.com/fetch/latlng?place_id=${place_id}`
             );
 
             if (!locationResponse.ok) {

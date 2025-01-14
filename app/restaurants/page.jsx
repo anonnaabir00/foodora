@@ -26,7 +26,7 @@ export default function Restaurants() {
                 const { lat, lng } = location;
 
                 const response = await fetch(
-                    `https://foodora-api-a713.onrender.com/fetch/restaurants?lat=${lat}&lng=${lng}`
+                    `https://foodora-api.iamabir.com/fetch/restaurants?lat=${lat}&lng=${lng}`
                 );
 
                 if (!response.ok) {
