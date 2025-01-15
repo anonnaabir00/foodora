@@ -32,9 +32,19 @@ h4{
     font-weight: 600;
 }
 
+a {
+    font-size: 16px;
+}
+
 p {
+    font-size: 16px;
     margin-bottom: 0rem;
 }
+
+.rating-number {
+    font-size: 16px;
+}
+
 .top_section {
     background-color: #FF5200;
     padding: 16px;

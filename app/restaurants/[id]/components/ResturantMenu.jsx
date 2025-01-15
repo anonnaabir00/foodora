@@ -18,6 +18,22 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
 
     return (
         <div className="container">
+            <div className="foot-types">
+                <div className="container foot-type-inner">
+                    <div className="toggle-box">
+                        <div className="toggle toggle-green">
+                            <input type="checkbox" id="mode-toggle" className="toggle__input"/>
+                            <label htmlFor="mode-toggle" className="toggle__label"></label>
+                        </div>
+                    </div>
+                    <div className="toggle-box">
+                        <div className="toggle toggle-red">
+                            <input type="checkbox" id="non-toggle" className="toggle_red__input"/>
+                            <label htmlFor="non-toggle" className="toggle_red__label"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/* Ant Design Tabs with Custom Styles */}
             <Tabs
                 activeKey={selectedCategory}

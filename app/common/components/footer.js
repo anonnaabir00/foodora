@@ -36,7 +36,6 @@ export default function Footer() {
                                         <li><a href="#">Burger</a></li>
                                         <li><a href="#">Mexican</a></li>
                                         <li><a href="#">Italian</a></li>
-                                        <li><a href="#">Halal</a></li>
                                     </ul>
                                 </div>
                                 <div className="col-md-3">
@@ -46,21 +45,12 @@ export default function Footer() {
                                         <li><a href="#">Indian</a></li>
                                         <li><a href="#">Asian</a></li>
                                         <li><a href="#">Burger</a></li>
-                                        <li><a href="#">Mexican</a></li>
-                                        <li><a href="#">Italian</a></li>
-                                        <li><a href="#">Halal</a></li>
                                     </ul>
                                 </div>
                                 <div className="col-md-3">
                                     <ul className="cuisines-list">
-                                        <li><a href="#">Sushi</a></li>
-                                        <li><a href="#">Pizza</a></li>
-                                        <li><a href="#">Indian</a></li>
-                                        <li><a href="#">Asian</a></li>
                                         <li><a href="#">Burger</a></li>
-                                        <li><a href="#">Mexican</a></li>
-                                        <li><a href="#">Italian</a></li>
-                                        <li><a href="#">Halal</a></li>
+                                        <li><a href="#">Asian</a></li>
                                     </ul>
                                 </div>
                             </div>

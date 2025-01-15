@@ -29,9 +29,9 @@ export default function RestaurantCard({ restaurants }) {
                                         alt={restaurant.name || 'Restaurant Image'}
                                         style={{
                                             width: '100%',
-                                            height: '200px',
+                                            height: '150px',
                                             objectFit: 'cover',
-                                            borderRadius: '8px 8px 0 0',
+                                            borderRadius: '10px 10px 0 0',
                                         }}
                                     />
                                 )}
@@ -67,7 +67,7 @@ export default function RestaurantCard({ restaurants }) {
                                         </div>
                                         <div className="col-md-3 start-rating">
                                             <img src="/images/Star Rating Icon.png" alt="Star Rating" />
-                                            <span>{restaurant.avgRatingString || 'New'}</span>
+                                            <span className="rating-number">{restaurant.avgRatingString || 'New'}</span>
                                         </div>
                                     </div>
 
