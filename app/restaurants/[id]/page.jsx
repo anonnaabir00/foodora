@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Spin } from 'antd';
 import Cookies from 'js-cookie';
 import ResturantMenu from "@/app/restaurants/[id]/components/ResturantMenu";
+import MenuSkeleton from "@/app/restaurants/[id]/components/MenuSkeleton";
 
 export default function RestaurantDetail() {
     const params = useParams();
@@ -71,19 +71,7 @@ export default function RestaurantDetail() {
     };
 
     if (loading) {
-        return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                flexDirection: 'column',
-                gap: '16px'
-            }}>
-                <Spin size="large" />
-                <div>Loading restaurant details...</div>
-            </div>
-        );
+        return <MenuSkeleton />; // Use the MenuSkeleton component
     }
 
     if (error) {
@@ -123,7 +111,7 @@ export default function RestaurantDetail() {
                             <div className="food-rank">
                                 <div className="food-start-rate">
                                     <img src="/images/Star Rating Icon.png" alt="Rating"/>
-                                    <span>
+                                    <span className="rating-text">
                                         {typeof restaurant.info.avgRating === 'object'
                                             ? restaurant.info.avgRating.value
                                             : restaurant.info.avgRating || 'New'}

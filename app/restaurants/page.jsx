@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { Spin } from 'antd';
 import ResturantFilter from "@/app/restaurants/components/ResturantFilter";
 import ResturantCard from "@/app/restaurants/components/ResturantCard";
+import RestaurantSkeleton from "@/app/restaurants/components/RestaurantSkeleton";
 
 export default function Restaurants() {
     const [restaurants, setRestaurants] = useState([]);
@@ -39,7 +39,6 @@ export default function Restaurants() {
                 if (data?.success?.cards?.[0]?.card?.card?.gridElements?.infoWithStyle?.restaurants) {
                     const restaurantsData = data.success.cards[0].card.card.gridElements.infoWithStyle.restaurants;
                     setRestaurants(restaurantsData);
-                    // Store in local storage
                     localStorage.setItem('restaurantsData', JSON.stringify(restaurantsData));
                 } else {
                     setError('No restaurants found in the response.');
@@ -54,18 +53,6 @@ export default function Restaurants() {
 
         fetchRestaurants();
     }, []);
-
-    if (loading) {
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Spin size="large" tip="Loading restaurants..." />
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>;
-    }
 
     return (
         <div>
@@ -91,7 +78,13 @@ export default function Restaurants() {
                 </div>
 
                 <ResturantFilter />
-                <ResturantCard restaurants={restaurants} />
+                {loading ? (
+                    <RestaurantSkeleton />
+                ) : error ? (
+                    <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>
+                ) : (
+                    <ResturantCard restaurants={restaurants} />
+                )}
             </main>
         </div>
     );
