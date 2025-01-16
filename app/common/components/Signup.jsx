@@ -83,7 +83,7 @@ export default function Signup() {
             }
 
             Cookies.set('userData', JSON.stringify(data.user), { expires: 7 });
-            window.location.href = '/dashboard';
+            window.location.href = '/';
         } catch (err) {
             setError(err.message);
         } finally {
