@@ -76,6 +76,7 @@ export default function LocationSearch() {
         };
 
         Cookies.set('selectedLocation', JSON.stringify(selectedLocation), { expires: 7 });
+        handleEssenFindenClick();
     };
 
     // Handle clear input
@@ -171,7 +172,7 @@ export default function LocationSearch() {
                 <div className="fullscreen-overlay">
                     <div className="loader-content">
                         <Spin size="large" />
-                        <p>Getting Location...</p>
+                        <p>Getting Resturants...</p>
                     </div>
                 </div>
             )}
