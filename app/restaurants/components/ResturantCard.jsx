@@ -36,17 +36,25 @@ export default function RestaurantCard({ restaurants }) {
                                     />
                                 )}
 
+                                {/*/!* Discount Information *!/*/}
+                                {/*{restaurant.aggregatedDiscountInfoV3?.header && (*/}
+                                {/*    <div className="discount-text">*/}
+                                {/*        <img src="/images/percentage-icon.png" alt="Discount Icon" />*/}
+                                {/*        <p>*/}
+                                {/*            {`${restaurant.aggregatedDiscountInfoV3.header} ${*/}
+                                {/*                restaurant.aggregatedDiscountInfoV3.subHeader || ''*/}
+                                {/*            }`}*/}
+                                {/*        </p>*/}
+                                {/*    </div>*/}
+                                {/*)}*/}
+
+
                                 {/* Discount Information */}
-                                {restaurant.aggregatedDiscountInfoV3?.header && (
+
                                     <div className="discount-text">
                                         <img src="/images/percentage-icon.png" alt="Discount Icon" />
-                                        <p>
-                                            {`${restaurant.aggregatedDiscountInfoV3.header} ${
-                                                restaurant.aggregatedDiscountInfoV3.subHeader || ''
-                                            }`}
-                                        </p>
+                                        <p>12% off for today</p>
                                     </div>
-                                )}
 
                                 <div className="inner-details-section">
                                     <div className="restaurant-name-detail row">
