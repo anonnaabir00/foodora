@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { redirect } from 'next/navigation'
 import Cookies from 'js-cookie';
 import ResturantFilter from "@/app/restaurants/components/ResturantFilter";
 import ResturantCard from "@/app/restaurants/components/ResturantCard";
@@ -9,50 +10,88 @@ import RestaurantSkeleton from "@/app/restaurants/components/RestaurantSkeleton"
 export default function Restaurants() {
     const [restaurants, setRestaurants] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
+    const [pagination, setPagination] = useState(11); // Initial pagination value
+    const [hasMore, setHasMore] = useState(true); // Track if more items can be loaded
 
-    useEffect(() => {
-        const fetchRestaurants = async () => {
-            const locationData = Cookies.get('locationData');
+    const fetchRestaurants = useCallback(async (paginationValue) => {
+        const locationData = Cookies.get('locationData');
 
-            if (!locationData) {
-                setError('No location data found. Please select a location first.');
-                setLoading(false);
-                return;
+        if (!locationData) {
+            redirect('/')
+        }
+
+        try {
+            const { location } = JSON.parse(locationData);
+            const { lat, lng } = location;
+
+            const response = await fetch(
+                `https://skymaxfiber.co.in/fetch/restaurants?lat=${lat}&lng=${lng}&pagination=${paginationValue}`
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            try {
-                const { location } = JSON.parse(locationData);
-                const { lat, lng } = location;
+            const data = await response.json();
+            console.log('Restaurant response received:', data);
 
-                const response = await fetch(
-                    `https://skymaxfiber.co.in/fetch/restaurants?lat=${lat}&lng=${lng}`
+            if (data?.success?.cards?.[0]?.card?.card?.gridElements?.infoWithStyle?.restaurants) {
+                const newRestaurants = data.success.cards[0].card.card.gridElements.infoWithStyle.restaurants;
+
+                // If no new restaurants are returned, we've reached the end
+                if (newRestaurants.length === 0) {
+                    setHasMore(false);
+                    return;
+                }
+
+                // If this is a new fetch (not loading more), replace the restaurants
+                // If loading more, append the new restaurants to existing ones
+                setRestaurants(prev =>
+                    paginationValue === 11 ? newRestaurants : [...prev, ...newRestaurants]
                 );
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+                localStorage.setItem('restaurantsData', JSON.stringify(
+                    paginationValue === 11 ? newRestaurants : [...restaurants, ...newRestaurants]
+                ));
+            } else {
+                setError('No restaurants found in the response.');
+                setHasMore(false);
+            }
+        } catch (error) {
+            console.error('Error fetching restaurants:', error);
+            setError('Failed to fetch restaurants. Please try again.');
+        }
+    }, [restaurants]);
 
-                const data = await response.json();
-                console.log('Restaurant response received:', data);
+    // Initial load
+    useEffect(() => {
+        setLoading(true);
+        fetchRestaurants(pagination)
+            .finally(() => setLoading(false));
+    }, []);
 
-                if (data?.success?.cards?.[0]?.card?.card?.gridElements?.infoWithStyle?.restaurants) {
-                    const restaurantsData = data.success.cards[0].card.card.gridElements.infoWithStyle.restaurants;
-                    setRestaurants(restaurantsData);
-                    localStorage.setItem('restaurantsData', JSON.stringify(restaurantsData));
-                } else {
-                    setError('No restaurants found in the response.');
-                }
-            } catch (error) {
-                console.error('Error fetching restaurants:', error);
-                setError('Failed to fetch restaurants. Please try again.');
-            } finally {
-                setLoading(false);
+    // Scroll handler
+    useEffect(() => {
+        const handleScroll = async () => {
+            if (
+                window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500 &&
+                !loading &&
+                !loadingMore &&
+                hasMore
+            ) {
+                setLoadingMore(true);
+                const nextPagination = pagination + 15;
+                setPagination(nextPagination);
+                await fetchRestaurants(nextPagination);
+                setLoadingMore(false);
             }
         };
 
-        fetchRestaurants();
-    }, []);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [pagination, loading, loadingMore, hasMore, fetchRestaurants]);
 
     return (
         <div>
@@ -78,12 +117,16 @@ export default function Restaurants() {
                 </div>
 
                 <ResturantFilter />
+
                 {loading ? (
                     <RestaurantSkeleton />
                 ) : error ? (
                     <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>
                 ) : (
-                    <ResturantCard restaurants={restaurants} />
+                    <>
+                        <ResturantCard restaurants={restaurants} />
+                        {loadingMore && <RestaurantSkeleton />}
+                    </>
                 )}
             </main>
         </div>
