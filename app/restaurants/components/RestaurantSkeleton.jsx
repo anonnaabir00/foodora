@@ -4,7 +4,7 @@ const RestaurantSkeleton = () => {
     return (
         <div className="recommended-section">
             <div className="container recommended-section-inner">
-                <h2 className="recommended-heading">Recommended for you</h2>
+                {/*<h2 className="recommended-heading">Recommended for you</h2>*/}
                 <div className="row recommended-list-boxs">
                     {[1, 2, 3, 4, 5, 6].map((index) => (
                         <div className="col-md-4 recommended-box" key={index}>
