@@ -2400,3 +2400,11 @@ body {
 .ant-modal-close-x {
   font-size: 12px !important;
 }
+
+.ant-drawer-body {
+  padding: 0px !important;
+}
+
+.ant-drawer-header {
+  padding: 0px !important;
+}

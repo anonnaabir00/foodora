@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Drawer } from "antd";
-import { addToCart, getCartItems } from './cartUtils';
+import { addToCart } from './cartUtils';
 import Cart from './Cart';
 
 export default function RestaurantMenu({ menuData, restaurantInfo }) {
     const [isCartVisible, setIsCartVisible] = useState(false);
+    const [cartUpdated, setCartUpdated] = useState(false); // State to trigger cart re-render
 
     // Process menu data using the function we created earlier
     const processedMenu = menuData ? processMenuData(menuData) : [];
@@ -28,6 +29,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
     const handleAddToCart = (item) => {
         addToCart(item);
         setIsCartVisible(true); // Open the drawer when an item is added
+        setCartUpdated((prev) => !prev); // Toggle cartUpdated state to trigger re-render
     };
 
     return (
@@ -110,13 +112,27 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
 
             {/* Ant Design Drawer for Cart */}
             <Drawer
-                title="Your Cart"
+                title={null}
                 placement="right"
                 onClose={() => setIsCartVisible(false)}
                 visible={isCartVisible}
                 width={400} // Adjust the width as needed
             >
-                <Cart onClose={() => setIsCartVisible(false)} />
+                extra={
+                <button
+                    onClick={() => setIsCartVisible(false)}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        color: '#000',
+                    }}
+                >
+                    Close
+                </button>
+            }
+                <Cart onClose={() => setIsCartVisible(false)} key={cartUpdated ? 'updated' : 'not-updated'} />
             </Drawer>
         </div>
     );
