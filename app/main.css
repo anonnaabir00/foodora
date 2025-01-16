@@ -1209,28 +1209,15 @@ button.apply-btn {
 /*Cart Popup CSS end*/
 
 /*Sign up Popup CSS start*/
-form.signin-up-form button.submit-btn {
-    pointer-events: none;
-    opacity: 0.5;
-}
+/*form.signin-up-form button.submit-btn {*/
+/*    pointer-events: none;*/
+/*    opacity: 0.5;*/
+/*}*/
 form.signin-up-form.fields-filled button.submit-btn{
     opacity: 1;
     pointer-events: painted;
 }
-.center_popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    width: 459px;
-    box-shadow: -15px 0px 20px rgb(0 0 0 / 12%);
-    border-radius: 10px;
-}
-div.center-popup-overlay {
-    background-color: #00000047;
-    z-index: 99;
-}
+
 .signup_popup_forms {
     padding: 24px;
 }
