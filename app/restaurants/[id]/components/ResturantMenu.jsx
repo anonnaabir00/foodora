@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
-import { Tabs } from "antd";
+import React, { useState, useEffect } from "react";
+import { Tabs, Drawer } from "antd";
+import { addToCart, getCartItems } from './cartUtils';
+import Cart from './Cart';
 
 export default function RestaurantMenu({ menuData, restaurantInfo }) {
+    const [isCartVisible, setIsCartVisible] = useState(false);
+
     // Process menu data using the function we created earlier
     const processedMenu = menuData ? processMenuData(menuData) : [];
     console.log("Processed Menu:", processedMenu);
@@ -20,6 +24,11 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
             }
         }
     }, [selectedCategory]);
+
+    const handleAddToCart = (item) => {
+        addToCart(item);
+        setIsCartVisible(true); // Open the drawer when an item is added
+    };
 
     return (
         <div className="container">
@@ -89,7 +98,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                                             <p>
                                                 <span><sup>₹</sup>{item.price}</span>
                                             </p>
-                                            <a href="#">Add</a>
+                                            <a href="#" onClick={() => handleAddToCart(item)}>Add</a>
                                         </div>
                                     </div>
                                 </div>
@@ -98,6 +107,17 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                     </div>
                 ))}
             </div>
+
+            {/* Ant Design Drawer for Cart */}
+            <Drawer
+                title="Your Cart"
+                placement="right"
+                onClose={() => setIsCartVisible(false)}
+                visible={isCartVisible}
+                width={400} // Adjust the width as needed
+            >
+                <Cart onClose={() => setIsCartVisible(false)} />
+            </Drawer>
         </div>
     );
 }
@@ -135,7 +155,7 @@ function processMenuData(menuData) {
                         id: item.id,
                         name: item.name,
                         description: item.description,
-                        price: item.price / 100, // Convert price from paise to rupees
+                        price: item.price / 100 || item.defaultPrice / 100,
                         imageId: item.imageId,
                         ratings: item.ratings ? {
                             rating: item.ratings.aggregatedRating.rating,
