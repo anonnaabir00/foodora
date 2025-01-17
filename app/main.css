@@ -460,12 +460,17 @@ p.location-item a {
 
 /*restaurant-listing CSS start*/
 .container.food-icons_inner {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 20px;
     vertical-align: middle;
     padding-top: 30px;
     padding-bottom: 45px;
     text-align: center;
+}
+
+.icon-list:hover {
+    cursor: pointer;
 }
 .container.food-icons_inner .icon-list p{
     color: #1E293B;

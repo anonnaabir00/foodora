@@ -2344,9 +2344,7 @@ body {
   color: #F55204 !important;
 }
 
-.ant-tabs-nav {
-  margin-top: -2rem !important;
-}
+
 .ant-tabs .ant-tabs-ink-bar {
   background-color: #F55204 !important;
   height: 5px !important;
@@ -2408,3 +2406,83 @@ body {
 .ant-drawer-header {
   padding: 0px !important;
 }
+
+/*Resturant Category Slider*/
+
+/* Add these new styles without modifying your existing ones */
+.slider-container {
+  margin: 0 40px;
+  position: relative;
+}
+
+.slider-item {
+  padding: 0 10px;
+}
+
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  padding: 0;
+}
+
+.custom-arrow:hover {
+  background: #e0e0e0;
+}
+
+.custom-arrow img {
+  width: 20px;
+  height: 20px;
+}
+
+.custom-arrow.slick-prev {
+  left: -40px;
+}
+
+.custom-arrow.slick-next {
+  right: -40px;
+}
+
+.custom-arrow.slick-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Override some slick-slider default styles */
+.slick-slider {
+  margin: 0;
+}
+
+.slick-track {
+  margin-left: 0;
+}
+
+.slick-list {
+  margin: 0 -10px;
+}
+
+/* Ensure icons maintain their size */
+/*.icon-list img {*/
+/*  width: 40px;*/
+/*  height: 40px;*/
+/*  object-fit: contain;*/
+/*  margin-bottom: 8px;*/
+/*}*/
+
+/*.icon-list p {*/
+/*  margin: 0;*/
+/*  font-size: 14px;*/
+/*  white-space: nowrap;*/
+/*  overflow: hidden;*/
+/*  text-overflow: ellipsis;*/
+/*}*/
