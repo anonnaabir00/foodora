@@ -3,152 +3,13 @@ import { Tabs, Drawer } from "antd";
 import { addToCart } from './cartUtils';
 import Cart from './Cart';
 
-export default function RestaurantMenu({ menuData, restaurantInfo }) {
-    const [isCartVisible, setIsCartVisible] = useState(false);
-    const [cartUpdated, setCartUpdated] = useState(false); // State to trigger cart re-render
-
-    // Process menu data using the function we created earlier
-    const processedMenu = menuData ? processMenuData(menuData) : [];
-    console.log("Processed Menu:", processedMenu);
-
-    // State to track the selected category
-    const [selectedCategory, setSelectedCategory] = useState(
-        processedMenu.length > 0 ? processedMenu[0].category : null
-    );
-
-    // Scroll to the selected category when it changes
-    useEffect(() => {
-        if (selectedCategory) {
-            const element = document.getElementById(selectedCategory);
-            if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-        }
-    }, [selectedCategory]);
-
-    const handleAddToCart = (item) => {
-        addToCart(item);
-        setIsCartVisible(true); // Open the drawer when an item is added
-        setCartUpdated((prev) => !prev); // Toggle cartUpdated state to trigger re-render
-    };
-
-    return (
-        <div className="container">
-            <div className="foot-types">
-                <div className="container foot-type-inner">
-                    <div className="toggle-box">
-                        <div className="toggle toggle-green">
-                            <input type="checkbox" id="mode-toggle" className="toggle__input"/>
-                            <label htmlFor="mode-toggle" className="toggle__label"></label>
-                        </div>
-                    </div>
-                    <div className="toggle-box">
-                        <div className="toggle toggle-red">
-                            <input type="checkbox" id="non-toggle" className="toggle_red__input"/>
-                            <label htmlFor="non-toggle" className="toggle_red__label"></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Ant Design Tabs with Custom Styles */}
-            <Tabs
-                activeKey={selectedCategory}
-                onChange={(key) => setSelectedCategory(key)}
-                tabPosition="top"
-                tabBarStyle={{
-                    marginTop: '1rem',
-                    marginBottom: '2rem',
-                    borderRadius: "8px",
-                }}
-                tabBarGutter={40} // Add spacing between tabs
-            >
-                {processedMenu.map((category) => (
-                    <Tabs.TabPane
-                        tab={
-                            <span className="custom-tab">
-                                {category.category} ({category.items.length})
-                            </span>
-                        }
-                        key={category.category}
-                    />
-                ))}
-            </Tabs>
-
-            {/* Render all menu items */}
-            <div className="menu-grid">
-                {processedMenu.map((category) => (
-                    <div key={category.category} id={category.category}>
-                        <h2 style={{ marginBottom: '1rem' }}>
-                            {category.category}
-                        </h2>
-                        <div className="row" style={{ marginBottom: '2rem' }}>
-                            {category.items.map((item) => (
-                                <div key={item.id} className="col-md-4 item-details" style={{ marginBottom: '1rem', marginRight: '1rem' }}>
-                                    <div className="item-image">
-                                        {item.imageId && (
-                                            <img
-                                                src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`}
-                                                alt={item.name}
-                                                className="arrow-icon"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="item-title">
-                                        <h3>{item.name}</h3>
-                                        <div className="item-price">
-                                            <p>
-                                                <span><sup>₹</sup>{item.price}</span>
-                                            </p>
-                                            <a href="#" onClick={() => handleAddToCart(item)}>Add</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Ant Design Drawer for Cart */}
-            <Drawer
-                title={null}
-                placement="right"
-                onClose={() => setIsCartVisible(false)}
-                visible={isCartVisible}
-                width={400} // Adjust the width as needed
-            >
-                extra={
-                <button
-                    onClick={() => setIsCartVisible(false)}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        color: '#000',
-                    }}
-                >
-                    Close
-                </button>
-            }
-                <Cart onClose={() => setIsCartVisible(false)} key={cartUpdated ? 'updated' : 'not-updated'} />
-            </Drawer>
-        </div>
-    );
-}
-
-// Menu data processing function
 function processMenuData(menuData) {
     console.log("Raw Menu Data:", menuData);
 
-    // Skip the first item and the last two items from menuData
     const filteredMenuData = menuData.slice(1, -2);
 
-    // Process all menu cards in the filteredMenuData
     const processedMenu = filteredMenuData
         .filter(menuItem => {
-            // Check if the menu item has either itemCards or categories[0].itemCards
             return (
                 menuItem?.card?.card?.itemCards ||
                 menuItem?.card?.card?.categories?.[0]?.itemCards
@@ -157,7 +18,6 @@ function processMenuData(menuData) {
         .flatMap(menuItem => {
             const menuCard = menuItem.card.card;
 
-            // Get itemCards from either the direct path or the nested categories path
             const itemCards =
                 menuCard.itemCards ||
                 menuCard.categories?.[0]?.itemCards ||
@@ -173,6 +33,7 @@ function processMenuData(menuData) {
                         description: item.description,
                         price: item.price / 100 || item.defaultPrice / 100,
                         imageId: item.imageId,
+                        isVeg: item.isVeg,
                         ratings: item.ratings ? {
                             rating: item.ratings.aggregatedRating.rating,
                             ratingCount: item.ratings.aggregatedRating.ratingCount
@@ -183,4 +44,169 @@ function processMenuData(menuData) {
         });
 
     return processedMenu;
+}
+
+export default function RestaurantMenu({ menuData, restaurantInfo }) {
+    const [isCartVisible, setIsCartVisible] = useState(false);
+    const [cartUpdated, setCartUpdated] = useState(false);
+    const [showVeg, setShowVeg] = useState(false);
+    const [showNonVeg, setShowNonVeg] = useState(false);
+
+    const processedMenu = menuData ? processMenuData(menuData) : [];
+    console.log("Processed Menu:", processedMenu);
+
+    const [selectedCategory, setSelectedCategory] = useState(
+        processedMenu.length > 0 ? processedMenu[0].category : null
+    );
+
+    useEffect(() => {
+        if (selectedCategory) {
+            const element = document.getElementById(selectedCategory);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }
+    }, [selectedCategory]);
+
+    const handleAddToCart = (item) => {
+        addToCart(item);
+        setIsCartVisible(true);
+        setCartUpdated((prev) => !prev);
+    };
+
+    // Filter items based on veg/non-veg selection
+    const getFilteredItems = (items) => {
+        if (!showVeg && !showNonVeg) return items; // Show all items if no filter is selected
+        return items.filter(item => {
+            if (showVeg && !showNonVeg) return item.isVeg === 1;
+            if (!showVeg && showNonVeg) return item.isVeg === 0 || item.isVeg === undefined || item.isVeg === null;
+            if (showVeg && showNonVeg) return true;
+            return false;
+        });
+    };
+
+    // Filter categories and their items
+    const filteredMenu = processedMenu.map(category => ({
+        ...category,
+        items: getFilteredItems(category.items)
+    })).filter(category => category.items.length > 0);
+
+    return (
+        <div className="container">
+            <div className="foot-types">
+                <div className="container foot-type-inner">
+                    <div className="toggle-box">
+                        <div className="toggle toggle-green">
+                            <input
+                                type="checkbox"
+                                id="mode-toggle"
+                                className="toggle__input"
+                                checked={showVeg}
+                                onChange={(e) => setShowVeg(e.target.checked)}
+                            />
+                            <label htmlFor="mode-toggle" className="toggle__label"></label>
+                        </div>
+                    </div>
+                    <div className="toggle-box">
+                        <div className="toggle toggle-red">
+                            <input
+                                type="checkbox"
+                                id="non-toggle"
+                                className="toggle_red__input"
+                                checked={showNonVeg}
+                                onChange={(e) => setShowNonVeg(e.target.checked)}
+                            />
+                            <label htmlFor="non-toggle" className="toggle_red__label"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Tabs
+                activeKey={selectedCategory}
+                onChange={(key) => setSelectedCategory(key)}
+                tabPosition="top"
+                tabBarStyle={{
+                    marginTop: '1rem',
+                    marginBottom: '2rem',
+                    borderRadius: "8px",
+                }}
+                tabBarGutter={40}
+            >
+                {filteredMenu.map((category) => (
+                    <Tabs.TabPane
+                        tab={
+                            <span className="custom-tab">
+                                {category.category} ({category.items.length})
+                            </span>
+                        }
+                        key={category.category}
+                    />
+                ))}
+            </Tabs>
+
+            <div className="menu-grid">
+                {filteredMenu.map((category) => (
+                    <div key={category.category} id={category.category}>
+                        <h2 style={{ marginBottom: '1rem' }}>
+                            {category.category}
+                        </h2>
+                        <div className="row" style={{ marginBottom: '2rem' }}>
+                            {category.items.map((item) => (
+                                <div key={item.id} className="col-md-4 item-details"
+                                     style={{marginBottom: '1rem', marginRight: '1rem'}}>
+                                    <div className="item-image">
+                                        {item.imageId && (
+                                            <img
+                                                src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`}
+                                                alt={item.name}
+                                                className="arrow-icon"
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="item-title">
+                                        <h3>{item.name}</h3>
+                                        {item.isVeg === 1 && <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}
+                                        <div className="item-price">
+                                            <p>
+                                                <span><sup>₹</sup>{item.price}</span>
+                                            </p>
+                                            <a href="#" onClick={(e) => {
+                                                e.preventDefault();
+                                                handleAddToCart(item);
+                                            }}>Add</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <Drawer
+                title={null}
+                placement="right"
+                onClose={() => setIsCartVisible(false)}
+                visible={isCartVisible}
+                width={400}
+                extra={
+                    <button
+                        onClick={() => setIsCartVisible(false)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            color: '#000',
+                        }}
+                    >
+                        Close
+                    </button>
+                }
+            >
+                <Cart onClose={() => setIsCartVisible(false)} key={cartUpdated ? 'updated' : 'not-updated'} />
+            </Drawer>
+        </div>
+    );
 }
