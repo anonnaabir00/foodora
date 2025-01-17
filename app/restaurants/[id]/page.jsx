@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
@@ -10,68 +10,76 @@ import MenuSkeleton from "@/app/restaurants/[id]/components/MenuSkeleton";
 export default function RestaurantDetail() {
     const params = useParams();
     const router = useRouter();
+
+    // Memoize the restaurantId
+    const restaurantId = useMemo(() => params.id, [params.id]);
+
     const [restaurant, setRestaurant] = useState(null);
     const [menuData, setMenuData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                // Get restaurant data from localStorage
-                const restaurantsData = localStorage.getItem('restaurantsData');
-                if (!restaurantsData) {
-                    router.push('/restaurants');
-                    return;
-                }
+    // Memoize the fetch function
+    const fetchMenuData = useCallback(async () => {
+        if (!restaurantId) return;
 
-                const restaurants = JSON.parse(restaurantsData);
-                const foundRestaurant = restaurants.find(
-                    r => r.info.id.toString() === params.id
-                );
-
-                if (foundRestaurant) {
-                    setRestaurant(foundRestaurant);
-
-                    // Get location data from cookies
-                    const locationData = Cookies.get('locationData');
-                    if (!locationData) {
-                        throw new Error('Location data not found');
-                    }
-                    const { location } = JSON.parse(locationData);
-                    const { lat, lng } = location;
-
-                    // Fetch menu data using the URL restaurant ID
-                    const menuResponse = await fetch(`https://skymaxfiber.co.in/fetch/menu?&lat=${lat}&lng=${lng}&restaurantId=${params.id}`);
-                    if (!menuResponse.ok) {
-                        throw new Error('Failed to fetch menu');
-                    }
-                    const menuData = await menuResponse.json();
-                    setMenuData(menuData[4]['groupedCard']['cardGroupMap']['REGULAR']['cards']);
-                } else {
-                    setError('Restaurant not found');
-                }
-            } catch (err) {
-                setError('Error loading restaurant details: ' + err.message);
-                console.error('Error:', err);
-            } finally {
-                setLoading(false);
+        try {
+            const locationData = Cookies.get('locationData');
+            if (!locationData) {
+                throw new Error('Location data not found');
             }
+
+            const { location } = JSON.parse(locationData);
+            const { lat, lng } = location;
+
+            const menuResponse = await fetch(
+                `https://skymaxfiber.co.in/fetch/menu?lat=${lat}&lng=${lng}&restaurantId=${restaurantId}`
+            );
+
+            if (!menuResponse.ok) {
+                throw new Error('Failed to fetch menu');
+            }
+
+            const menuData = await menuResponse.json();
+
+            // Try to find restaurant info in the response
+            const restaurantInfo = menuData[2]?.card?.card?.info;
+            if (restaurantInfo) {
+                setRestaurant({ info: restaurantInfo });
+            }
+
+            // Set menu data if available
+            const cards = menuData[4]?.groupedCard?.cardGroupMap?.REGULAR?.cards;
+            if (cards) {
+                setMenuData(cards);
+            }
+
+            if (!restaurantInfo && !cards) {
+                throw new Error('Invalid response structure');
+            }
+
+        } catch (err) {
+            setError('Error loading menu details: ' + err.message);
+        } finally {
+            setLoading(false);
         }
+    }, [restaurantId]);
 
-        fetchData();
-    }, [params.id, router]);
+    // Use effect with memoized fetch function
+    useEffect(() => {
+        fetchMenuData();
+    }, [fetchMenuData]);
 
-    // Helper function to safely get media URL
-    const getMediaUrl = () => {
+    // Memoize the media URL getter
+    const getMediaUrl = useCallback(() => {
         if (restaurant?.info?.cloudinaryImageId) {
             return `https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/${restaurant.info.cloudinaryImageId}`;
         }
         return '/images/default-restaurant.jpg';
-    };
+    }, [restaurant?.info?.cloudinaryImageId]);
 
     if (loading) {
-        return <MenuSkeleton />; // Use the MenuSkeleton component
+        return <MenuSkeleton />;
     }
 
     if (error) {
