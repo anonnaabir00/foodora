@@ -511,22 +511,18 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                 placement="right"
                 onClose={() => setIsCartVisible(false)}
                 open={isCartVisible}
-                width={400}
-                extra={
-                    <button
-                        onClick={() => setIsCartVisible(false)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: '16px',
-                            color: '#000',
-                        }}
-                    >
-                        Close
-                    </button>
-                }
+                width={450}
             >
+                <button
+                    className="popup-close-btn"
+                    onClick={() => setIsCartVisible(false)} // Pass a function to close the drawer
+                >
+                    <img className="arrow-icon" src="/images/Subtract.svg" alt="Close"/>
+                </button>
+                <div className="cart-heading">
+                    <h3>Your Cart</h3>
+                    <p>Review your items before checking out.</p>
+                </div>
                 {/*<Cart onClose={() => setIsCartVisible(false)} key={cartUpdated ? 'updated' : 'not-updated'} />*/}
                 <Cart
                     onClose={() => setIsCartVisible(false)}
