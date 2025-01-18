@@ -1,32 +1,56 @@
+// Cart.jsx
 import React, { useState, useEffect } from 'react';
 import { getCartItems, removeFromCart, updateQuantity } from './cartUtils';
 
-export default function Cart({ onClose }) {
-    const [cartItems, setCartItems] = useState(getCartItems()); // Initialize cart items from cookies
-    const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+export default function Cart({ onClose, cartUpdated }) {
+    const [cartItems, setCartItems] = useState([]);
 
-    // Function to handle quantity increase
-    const handleIncreaseQuantity = (itemId) => {
-        const item = cartItems.find((i) => i.id === itemId);
-        if (item) {
-            updateQuantity(itemId, item.quantity + 1); // Update quantity in cookies
-            setCartItems(getCartItems()); // Refresh cart items from cookies
+    useEffect(() => {
+        const items = getCartItems();
+        console.log("Cart Items loaded:", items);
+        setCartItems(items);
+    }, [cartUpdated]);
+
+    const totalPrice = cartItems.reduce((total, item) => {
+        const itemPrice = item.finalPrice || item.price;
+        return total + (itemPrice * item.quantity);
+    }, 0);
+
+    const handleIncreaseQuantity = (item) => {
+        const itemId = item.cartItemId || item.id;
+        console.log("Increasing quantity for item:", itemId);
+        const updatedItems = updateQuantity(itemId, item.quantity + 1);
+        setCartItems(updatedItems);
+    };
+
+    const handleDecreaseQuantity = (item) => {
+        const itemId = item.cartItemId || item.id;
+        console.log("Decreasing quantity for item:", itemId);
+        if (item.quantity > 1) {
+            const updatedItems = updateQuantity(itemId, item.quantity - 1);
+            setCartItems(updatedItems);
         }
     };
 
-    // Function to handle quantity decrease
-    const handleDecreaseQuantity = (itemId) => {
-        const item = cartItems.find((i) => i.id === itemId);
-        if (item && item.quantity > 1) {
-            updateQuantity(itemId, item.quantity - 1); // Update quantity in cookies
-            setCartItems(getCartItems()); // Refresh cart items from cookies
-        }
+    const handleRemoveItem = (item) => {
+        const itemId = item.cartItemId || item.id;
+        console.log("Removing item:", itemId);
+        const updatedItems = removeFromCart(itemId);
+        setCartItems(updatedItems);
     };
 
-    // Function to handle item removal
-    const handleRemoveItem = (itemId) => {
-        removeFromCart(itemId); // Remove item from cookies
-        setCartItems(getCartItems()); // Refresh cart items from cookies
+    const formatAddonPrice = (addon) => {
+        if (!addon || !addon.price) return '';
+        const price = typeof addon.price === 'number' ? addon.price / 100 : addon.price;
+        return `₹${price}`;
+    };
+
+    const getItemPrice = (item) => {
+        return item.finalPrice || item.price;
+    };
+
+    const handleCheckout = () => {
+        window.location.href = '/checkout';
     };
 
     return (
@@ -37,29 +61,67 @@ export default function Cart({ onClose }) {
             </div>
             <div className="cart-items-list">
                 <div className="cart-items-box-wrap">
-                    {cartItems.map((item) => (
-                        <div key={item.id} className="cart-items-box">
-                            <div className="item-details">
-                                <div className="item-image">
-                                    <img className="arrow-icon" src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`} alt={item.name} />
-                                </div>
-                                <div className="item-title">
-                                    <h3>{item.name}</h3>
-                                    <div className="item-price">
-                                        <p><span><sup>₹</sup>{item.price}</span></p>
-                                        <div className="qnt-box">
-                                            <button className="qnt-select-icon" onClick={() => handleDecreaseQuantity(item.id)}>-</button>
-                                            <span>{item.quantity}</span>
-                                            <button className="qnt-select-icon" onClick={() => handleIncreaseQuantity(item.id)}>+</button>
+                    {cartItems.length === 0 ? (
+                        <div className="empty-cart">
+                            <p>Your cart is empty</p>
+                        </div>
+                    ) : (
+                        cartItems.map((item) => (
+                            <div key={item.cartItemId || item.id} className="cart-items-box">
+                                <div className="item-details">
+                                    <div className="item-image">
+                                        {item.imageId && (
+                                            <img
+                                                className="arrow-icon"
+                                                src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`}
+                                                alt={item.name}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="item-title">
+                                        <h3>{item.name}</h3>
+                                        {item.selectedAddons && item.selectedAddons.length > 0 && (
+                                            <div className="selected-addons">
+                                                {item.selectedAddons.map((addon, index) => (
+                                                    <small
+                                                        key={index}
+                                                        style={{
+                                                            color: '#666',
+                                                            fontSize: '0.85em',
+                                                            display: 'block',
+                                                            marginTop: '2px'
+                                                        }}
+                                                    >
+                                                        {addon.name} {formatAddonPrice(addon)}
+                                                    </small>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <div className="item-price">
+                                            <p><span><sup>₹</sup>{getItemPrice(item)}</span></p>
+                                            <div className="qnt-box">
+                                                <button
+                                                    className="qnt-select-icon"
+                                                    onClick={() => handleDecreaseQuantity(item)}
+                                                >-</button>
+                                                <span>{item.quantity}</span>
+                                                <button
+                                                    className="qnt-select-icon"
+                                                    onClick={() => handleIncreaseQuantity(item)}
+                                                >+</button>
+                                            </div>
+                                            <button
+                                                className="trash-icon"
+                                                onClick={() => handleRemoveItem(item)}
+                                            >
+                                                <img src="/images/Trash-can.svg" alt="Remove" />
+                                            </button>
                                         </div>
-                                        <button className="trash-icon" onClick={() => handleRemoveItem(item.id)}>
-                                            <img src="/images/Trash-can.svg" alt="Remove" />
-                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
                 <div className="promo-code-box">
                     <h4>Promo code</h4>
@@ -86,7 +148,7 @@ export default function Cart({ onClose }) {
                         </div>
                     </div>
                 </div>
-                <button type="submit" className="submit-btn cart-checkout-btn">Checkout</button>
+                <button type="button" onClick={handleCheckout} className="submit-btn cart-checkout-btn">Checkout</button>
             </div>
         </div>
     );

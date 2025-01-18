@@ -2380,14 +2380,14 @@ body {
   font-size: 16px;
 }
 
-.ant-modal-content {
+.signup-modal .ant-modal-content {
   padding: 0px !important;
   width: 450px;
   margin-top: 7rem;
   margin-left: -2rem;
 }
 
-.ant-modal-close {
+.signup-modal .ant-modal-close {
   background-color: #0F182A !important;
   color: #FFFFFF !important;
   border-radius: 10px !important;
@@ -2395,15 +2395,15 @@ body {
   margin-right: 0.3rem;
 }
 
-.ant-modal-close-x {
+.signup-modal .ant-modal-close-x {
   font-size: 12px !important;
 }
 
-.ant-drawer-body {
+.signup-modal .ant-drawer-body {
   padding: 0px !important;
 }
 
-.ant-drawer-header {
+.signup-modal .ant-drawer-header {
   padding: 0px !important;
 }
 
@@ -2486,3 +2486,22 @@ body {
 /*  overflow: hidden;*/
 /*  text-overflow: ellipsis;*/
 /*}*/
+
+
+.addon-group {
+  margin-bottom: 20px;
+}
+
+.addon-group h4 {
+  margin-bottom: 10px;
+}
+
+.addon-choice {
+  margin: 8px 0;
+}
+
+.addon-choice .veg-icon {
+  width: 12px;
+  margin-left: 8px;
+  vertical-align: middle;
+}

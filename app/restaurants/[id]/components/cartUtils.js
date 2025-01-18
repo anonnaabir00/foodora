@@ -1,42 +1,72 @@
-import Cookies from 'js-cookie';
-
-const CART_KEY = 'cart';
-
-// Get cart items from cookies
+// cartUtils.js
 export const getCartItems = () => {
-    const cartItems = Cookies.get(CART_KEY);
-    return cartItems ? JSON.parse(cartItems) : [];
-};
-
-// Add or update an item in the cart
-export const addToCart = (item) => {
-    const cartItems = getCartItems();
-    const existingItem = cartItems.find((i) => i.id === item.id);
-
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cartItems.push({ ...item, quantity: 1 });
+    try {
+        const cartItems = localStorage.getItem('cartItems');
+        return cartItems ? JSON.parse(cartItems) : [];
+    } catch {
+        return [];
     }
-
-    Cookies.set(CART_KEY, JSON.stringify(cartItems));
 };
 
-// Remove an item from the cart
+export const addToCart = (item) => {
+    try {
+        const cartItems = getCartItems();
+        const itemId = item.cartItemId || item.id;
+
+        // Check if item exists (including customizations)
+        const existingItem = cartItems.find(cartItem =>
+            (item.selectedAddons ? cartItem.cartItemId === itemId : cartItem.id === itemId)
+        );
+
+        let updatedItems;
+        if (existingItem) {
+            // Update quantity if item exists
+            updatedItems = cartItems.map(cartItem =>
+                (cartItem.cartItemId || cartItem.id) === itemId
+                    ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                    : cartItem
+            );
+        } else {
+            // Add new item
+            updatedItems = [...cartItems, { ...item, quantity: 1, cartItemId: itemId }];
+        }
+
+        localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+        return updatedItems;
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        return [];
+    }
+};
+
 export const removeFromCart = (itemId) => {
-    const cartItems = getCartItems().filter((i) => i.id !== itemId);
-    Cookies.set(CART_KEY, JSON.stringify(cartItems));
+    try {
+        const cartItems = getCartItems();
+        const updatedItems = cartItems.filter(item =>
+            (item.cartItemId || item.id) !== itemId
+        );
+        localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+        return updatedItems;
+    } catch {
+        return [];
+    }
 };
 
-// Update the quantity of an item in the cart
-export const updateQuantity = (itemId, quantity) => {
-    const cartItems = getCartItems().map((i) =>
-        i.id === itemId ? { ...i, quantity: Math.max(1, quantity) } : i
-    );
-    Cookies.set(CART_KEY, JSON.stringify(cartItems));
+export const updateQuantity = (itemId, newQuantity) => {
+    try {
+        const cartItems = getCartItems();
+        const updatedItems = cartItems.map(item =>
+            (item.cartItemId || item.id) === itemId
+                ? { ...item, quantity: newQuantity }
+                : item
+        );
+        localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+        return updatedItems;
+    } catch {
+        return [];
+    }
 };
 
-// Clear the cart
 export const clearCart = () => {
-    Cookies.remove(CART_KEY);
+    localStorage.removeItem('cartItems');
 };

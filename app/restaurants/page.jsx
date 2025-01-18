@@ -35,7 +35,6 @@ export default function Restaurants() {
             }
 
             const data = await response.json();
-            console.log('Restaurant response received:', data);
 
             if (data?.success?.cards?.[0]?.card?.card?.gridElements?.infoWithStyle?.restaurants) {
                 const newRestaurants = data.success.cards[0].card.card.gridElements.infoWithStyle.restaurants;
