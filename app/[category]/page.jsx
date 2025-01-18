@@ -33,7 +33,7 @@ export default function CollectionPage() {
             const { lat, lng } = location;
 
             const response = await fetch(
-                `http://localhost:4000/fetch/restaurants-by-collection?lat=${lat}&lng=${lng}&collectionId=${collection_id}&tags=${tags}&widgetOffset=${widgetOffset}`,
+                `https://skymaxfiber.co.in/fetch/restaurants-by-collection?lat=${lat}&lng=${lng}&collectionId=${collection_id}&tags=${tags}&widgetOffset=${widgetOffset}`,
                 {
                     headers: {
                         'Accept': 'application/json',
