@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Drawer } from 'antd'; // Import Ant Design Drawer
 import Cookies from 'js-cookie'; // Import js-cookie to manage cookies
 import Cart from "@/app/restaurants/[id]/components/Cart";
@@ -76,13 +76,25 @@ export default function Header() {
 
             {/* Ant Design Drawer for Cart */}
             <Drawer
-                title="Your Cart"
+                title={false}
                 placement="right"
                 onClose={toggleCart} // Close the drawer when clicking outside or pressing ESC
                 open={isCartVisible} // Control drawer visibility
-                width={400} // Set drawer width
+                width={450} // Set drawer width
+                classNames="cart-drawer"
             >
-                <Cart onClose={toggleCart} /> {/* Pass the toggleCart function to close the drawer from inside the Cart */}
+                <button
+                    className="popup-close-btn"
+                    onClick={() => setIsCartVisible(false)} // Pass a function to close the drawer
+                >
+                    <img className="arrow-icon" src="/images/Subtract.svg" alt="Close"/>
+                </button>
+                <div className="cart-heading">
+                    <h3>Your Cart</h3>
+                    <p>Review your items before checking out.</p>
+                </div>
+                <Cart
+                    onClose={toggleCart}/> {/* Pass the toggleCart function to close the drawer from inside the Cart */}
             </Drawer>
 
             {/* Ant Design Modal for Signup/Login */}

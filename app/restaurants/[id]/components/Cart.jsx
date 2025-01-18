@@ -55,10 +55,10 @@ export default function Cart({ onClose, cartUpdated }) {
 
     return (
         <div className="cart-content">
-            <div className="cart-heading">
-                <h3>Your Cart ({cartItems.length})</h3>
-                <p>Review your items before checking out.</p>
-            </div>
+            {/*<div className="cart-heading">*/}
+            {/*    <h3>Your Cart ({cartItems.length})</h3>*/}
+            {/*    <p>Review your items before checking out.</p>*/}
+            {/*</div>*/}
             <div className="cart-items-list">
                 <div className="cart-items-box-wrap">
                     {cartItems.length === 0 ? (
@@ -79,42 +79,44 @@ export default function Cart({ onClose, cartUpdated }) {
                                         )}
                                     </div>
                                     <div className="item-title">
-                                        <h3>{item.name}</h3>
-                                        {item.selectedAddons && item.selectedAddons.length > 0 && (
-                                            <div className="selected-addons">
-                                                {item.selectedAddons.map((addon, index) => (
-                                                    <small
-                                                        key={index}
-                                                        style={{
-                                                            color: '#666',
-                                                            fontSize: '0.85em',
-                                                            display: 'block',
-                                                            marginTop: '2px'
-                                                        }}
-                                                    >
-                                                        {addon.name} {formatAddonPrice(addon)}
-                                                    </small>
-                                                ))}
-                                            </div>
-                                        )}
+                                        <h3 className="truncate">{item.name}</h3>
+                                        {/*{item.selectedAddons && item.selectedAddons.length > 0 && (*/}
+                                        {/*    <div className="selected-addons">*/}
+                                        {/*        {item.selectedAddons.map((addon, index) => (*/}
+                                        {/*            <small*/}
+                                        {/*                key={index}*/}
+                                        {/*                style={{*/}
+                                        {/*                    color: '#666',*/}
+                                        {/*                    fontSize: '0.85em',*/}
+                                        {/*                    display: 'block',*/}
+                                        {/*                    marginTop: '2px'*/}
+                                        {/*                }}*/}
+                                        {/*            >*/}
+                                        {/*                {addon.name} {formatAddonPrice(addon)}*/}
+                                        {/*            </small>*/}
+                                        {/*        ))}*/}
+                                        {/*    </div>*/}
+                                        {/*)}*/}
                                         <div className="item-price">
                                             <p><span><sup>₹</sup>{getItemPrice(item)}</span></p>
                                             <div className="qnt-box">
                                                 <button
                                                     className="qnt-select-icon"
                                                     onClick={() => handleDecreaseQuantity(item)}
-                                                >-</button>
+                                                >-
+                                                </button>
                                                 <span>{item.quantity}</span>
                                                 <button
                                                     className="qnt-select-icon"
                                                     onClick={() => handleIncreaseQuantity(item)}
-                                                >+</button>
+                                                >+
+                                                </button>
                                             </div>
                                             <button
                                                 className="trash-icon"
                                                 onClick={() => handleRemoveItem(item)}
                                             >
-                                                <img src="/images/Trash-can.svg" alt="Remove" />
+                                                <img src="/images/Trash-can.svg" alt="Remove"/>
                                             </button>
                                         </div>
                                     </div>

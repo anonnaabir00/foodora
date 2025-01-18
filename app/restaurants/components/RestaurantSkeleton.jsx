@@ -1,6 +1,15 @@
 import { Skeleton } from 'antd';
 
 const RestaurantSkeleton = () => {
+
+    const getWidth = () => {
+        if (window.innerWidth < 768) { // Mobile devices
+            return '340px'; // Adjust this value as needed
+        } else { // Desktop and tablets
+            return '400px';
+        }
+    };
+
     return (
         <div className="recommended-section">
             <div className="container recommended-section-inner">
@@ -11,7 +20,7 @@ const RestaurantSkeleton = () => {
                             <Skeleton.Image
                                 active
                                 style={{
-                                    width: '400px',
+                                    minWidth: getWidth(),
                                     height: 150,
                                     borderRadius: '10px 10px 0 0'
                                 }}

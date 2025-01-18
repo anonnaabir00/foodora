@@ -2355,6 +2355,16 @@ body {
   align-items: end;
 }
 
+.ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+  flex-wrap: wrap !important;
+  overflow: auto !important; /* Disable scrolling */
+}
+
+.ant-tabs-nav-operations {
+  display: none !important;
+}
+
+
 
 .location_slider .slick-slider .slick-slide {
     margin: 0px !important;
@@ -2387,12 +2397,28 @@ body {
   margin-left: -2rem;
 }
 
+@media only screen and (max-width: 600px) {
+  .signup-modal .ant-modal-content {
+    padding: 7px !important;
+    width: 100%;
+    margin-top: 0rem;
+    margin-left: 0rem;
+  }
+}
+
 .signup-modal .ant-modal-close {
   background-color: #0F182A !important;
   color: #FFFFFF !important;
   border-radius: 10px !important;
   margin-top: 1rem;
   margin-right: 0.3rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .signup-modal .ant-modal-close {
+    margin-top: 0rem;
+    margin-right: 0rem;
+  }
 }
 
 .signup-modal .ant-modal-close-x {
@@ -2504,4 +2530,53 @@ body {
   width: 12px;
   margin-left: 8px;
   vertical-align: middle;
+}
+
+.menu-item-title{
+  display: flex;
+  gap: 10px;
+  justify-content: start;
+  align-items: start;
+}
+
+@media only screen and (max-width: 600px) {
+  .menu-item-title{
+    gap: 0px;
+  }
+}
+
+.menu-item-title img{
+  padding: 0px !important;
+  margin-top: 1px;
+}
+
+@media only screen and (max-width: 600px) {
+  .menu-item-title img{
+    padding-top: 5px !important;
+  }
+}
+
+.category-title {
+  font-size: 24px;
+}
+
+@media only screen and (max-width: 600px) {
+  .category-title {
+    font-size: 18px;
+  }
+}
+
+.ant-drawer .ant-drawer-body {
+  padding: 0px !important;
+}
+
+.ant-drawer-header {
+  display: none !important;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }

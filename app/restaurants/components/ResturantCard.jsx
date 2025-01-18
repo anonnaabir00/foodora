@@ -21,6 +21,7 @@ export default function RestaurantCard({ restaurants }) {
                     {restaurantList.map((restaurant) => {
                         return (
                             <div className="col-md-4 recommended-box" key={restaurant.id}>
+                                <Link href={`/restaurants/${restaurant.id}`}>
                                 {/* Restaurant Image */}
                                 {restaurant.cloudinaryImageId && (
                                     <img
@@ -59,13 +60,15 @@ export default function RestaurantCard({ restaurants }) {
                                 <div className="inner-details-section">
                                     <div className="restaurant-name-detail row">
                                         <div className="col-md-9">
-                                            <h3 className="restaurant-name">
+                                            <h3 className="restaurant-name truncate">
                                                 {restaurant.name || 'Restaurant Name'}
                                             </h3>
-                                            <p className="restaurant-address">
-                                                {Array.isArray(restaurant.cuisines)
-                                                    ? restaurant.cuisines.join(', ')
-                                                    : 'Cuisine information not available'}
+                                            <p className="restaurant-address truncate">
+                                                {restaurant.areaName}
+                                                {/*{restaurant.locality}*/}
+                                                {/*{Array.isArray(restaurant.cuisines)*/}
+                                                {/*    ? restaurant.cuisines.join(', ')*/}
+                                                {/*    : 'Cuisine information not available'}*/}
                                             </p>
                                             {/*<p className="restaurant-area">*/}
                                             {/*    {[restaurant.areaName, restaurant.locality]*/}
@@ -121,6 +124,7 @@ export default function RestaurantCard({ restaurants }) {
                                     {/*)}*/}
 
                                 </div>
+                                </Link>
                             </div>
                         );
                     })}

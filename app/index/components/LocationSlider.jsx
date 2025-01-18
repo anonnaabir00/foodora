@@ -3,8 +3,22 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { useEffect, useState } from 'react';
 
 export default function LocationSlider() {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 480);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const CustomPrevArrow = (props) => {
         const { onClick } = props;
         return (
@@ -12,12 +26,21 @@ export default function LocationSlider() {
                 onClick={onClick}
                 style={{
                     position: 'absolute',
-                    right: '60px', // Position next to the next arrow
-                    top: -50,
+                    ...(isMobile ? {
+                        right: '180px',
+                        bottom: '0px',
+                        top: 'auto',
+                        background: 'white',
+                        border: '1px solid #e0e0e0',
+                        color: '#000'
+                    } : {
+                        right: '60px',
+                        top: -50,
+                        background: '#000',
+                        color: '#fff'
+                    }),
                     width: '32px',
                     height: '32px',
-                    background: '#000',
-                    color: '#fff',
                     zIndex: 1,
                     display: 'flex',
                     alignItems: 'center',
@@ -49,12 +72,21 @@ export default function LocationSlider() {
                 onClick={onClick}
                 style={{
                     position: 'absolute',
-                    right: 0,
-                    top: -50,
+                    ...(isMobile ? {
+                        bottom: '0px',
+                        top: 'auto',
+                        right: '140px',
+                        background: 'white',
+                        border: '1px solid #e0e0e0',
+                        color: '#000'
+                    } : {
+                        right: 0,
+                        top: -50,
+                        background: '#000',
+                        color: '#fff'
+                    }),
                     width: '32px',
                     height: '32px',
-                    background: '#000',
-                    color: '#fff',
                     zIndex: 1,
                     display: 'flex',
                     alignItems: 'center',
@@ -97,8 +129,11 @@ export default function LocationSlider() {
             {
                 breakpoint: 480,
                 settings: {
-                    slidesToShow: 1,
+                    slidesToShow: 1.2,
                     slidesToScroll: 1,
+                    centerMode: false,
+                    infinite: false,
+                    arrows: true,
                 },
             },
         ],
@@ -110,7 +145,9 @@ export default function LocationSlider() {
                 <div className="slider_title" style={{ position: 'relative', marginBottom: '20px' }}>
                     <h2>Foodora gibt's auch in deiner Stadt!</h2>
                 </div>
-                <div className="sliderr_img">
+                <div className="sliderr_img" style={{
+                    marginBottom: isMobile ? '60px' : '20px'
+                }}>
                     <Slider {...settings} className="sliderr-location">
                         <div className="element element-1">
                             <img src="/images/Frame-27-1.png" alt="Rubtsovsk" />

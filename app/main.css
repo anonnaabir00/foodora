@@ -34,6 +34,8 @@ h4{
 
 a {
     font-size: 16px;
+    color: inherit;
+    text-decoration: none;
 }
 
 p {
@@ -649,6 +651,13 @@ a.view-botton {
 .col-md-4.item-details {
     width: 32%;
 }
+
+@media only screen and (max-width: 600px) {
+    .col-md-4.item-details {
+        width: 100%;
+    }
+}
+
 .food-details-inner.row {
     gap: 23px;
 }
@@ -1107,9 +1116,9 @@ button.submit-btn:hover {
     box-shadow: -15px 0px 20px rgb(0 0 0 / 12%);
 }
 button.popup-close-btn {
-    position: absolute;
-    right: 10px;
-    margin-top: 30px;
+    float: right;
+    margin-top: 2rem !important;
+    margin-right: 1rem !important;
 }
 .cart-heading {
     padding: 20px;
@@ -1587,8 +1596,8 @@ form#signin-form button.submit-btn {
         padding-bottom: 20px;
     }
     .container.slider_inner {
-        padding-top: 20px;
-        padding-bottom: 53px;
+        padding-top: 0px;
+        padding-bottom: 0px;
     }
     .location_slider .slick-slider .slick-slide{
         margin: 0px 15px;

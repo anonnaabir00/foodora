@@ -468,7 +468,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
             <div className="menu-grid">
                 {filteredMenu.map((category) => (
                     <div key={category.category} id={category.category}>
-                        <h2 style={{ marginBottom: '1rem' }}>
+                        <h2 className="category-title" style={{ marginBottom: '1rem' }}>
                             {category.category}
                         </h2>
                         <div className="row" style={{ marginBottom: '2rem' }}>
@@ -485,8 +485,13 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                                         )}
                                     </div>
                                     <div className="item-title">
-                                        <h3>{item.name}</h3>
-                                        {item.isVeg === 1 && <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}
+                                        <div className="menu-item-title">
+                                            {item.isVeg === 1 &&
+                                                <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}
+                                            <h3>{item.name}</h3>
+                                        </div>
+                                        {/*<h3>{item.name}</h3>*/}
+                                        {/*{item.isVeg === 1 && <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}*/}
                                         <div className="item-price">
                                             <p>
                                                 <span><sup>₹</sup>{item.price}</span>
