@@ -163,7 +163,7 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
                             ₹{calculateTotalPrice().toFixed(2)}
                         </div>
                         <div style={{ display: 'flex', gap: '12px' }}>
-                            {currentStep > 0 && (
+                            {currentStep > 0 && currentStep < steps.length - 1 && (
                                 <Button
                                     onClick={() => setCurrentStep(prev => prev - 1)}
                                     style={{
@@ -196,24 +196,14 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
                                 border: 'none',
                                 borderRadius: '4px',
                                 height: '40px',
-                                width: '120px'
+                                width: '120px',
+                                position: 'relative',
+                                top: '-2rem'
                             }}
                         >
                             Add to Cart
                         </Button>
                     )}
-                </div>
-            }
-            closeIcon={
-                <div style={{
-                    color: '#0F182A',
-                    position: 'relative',
-                    right: '16px',
-                    top: '16px',
-                    fontSize: '25px',
-                    cursor: 'pointer'
-                }}>
-                    ×
                 </div>
             }
         >
