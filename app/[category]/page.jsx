@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Cookies from 'js-cookie';
 import { redirect } from 'next/navigation';
 import ResturantCard from "@/app/restaurants/components/ResturantCard";
@@ -14,64 +14,100 @@ export default function CollectionPage() {
     const [restaurants, setRestaurants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
+    const [currentOffsetIndex, setCurrentOffsetIndex] = useState(0);
 
-    useEffect(() => {
-        if (!collection_id || !tags) return;
+    // Define the sequence of widgetOffset values from 8 to 100, incrementing by 1
+    const offsetSequence = Array.from({ length: 93 }, (_, i) => i + 8);
 
-        const fetchRestaurants = async () => {
-            const locationData = Cookies.get('locationData');
+    const fetchRestaurants = useCallback(async (widgetOffset) => {
+        const locationData = Cookies.get('locationData');
 
-            if (!locationData) {
-                redirect('/');
+        if (!locationData) {
+            redirect('/');
+            return;
+        }
+
+        try {
+            const { location } = JSON.parse(locationData);
+            const { lat, lng } = location;
+
+            const response = await fetch(
+                `http://localhost:4000/fetch/restaurants-by-collection?lat=${lat}&lng=${lng}&collectionId=${collection_id}&tags=${tags}&widgetOffset=${widgetOffset}`,
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Raw API response:', data);
+
+            const restaurantCards = data.cards.filter(card =>
+                card.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.Restaurant"
+            );
+
+            if (!restaurantCards || restaurantCards.length === 0) {
+                setHasMore(false);
+                if (currentOffsetIndex === 0) {
+                    throw new Error('No restaurant data found in response');
+                }
                 return;
             }
 
-            try {
-                const { location } = JSON.parse(locationData);
-                const { lat, lng } = location;
+            const restaurantsList = restaurantCards.map(card => card.card.card.info);
+            console.log('Processed restaurants list:', restaurantsList);
 
-                setLoading(true);
-                const response = await fetch(
-                    `http://localhost:4000/fetch/restaurants-by-collection?lat=${lat}&lng=${lng}&collectionId=${collection_id}&tags=${tags}`,
-                    {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
+            setRestaurants(prev => {
+                // Create a new Set with all restaurant IDs to remove duplicates
+                const existingIds = new Set(prev.map(r => r.id));
+                const uniqueNewRestaurants = restaurantsList.filter(r => !existingIds.has(r.id));
+                return [...prev, ...uniqueNewRestaurants];
+            });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('Raw API response:', data);
-
-                const restaurantCards = data.cards.filter(card =>
-                    card.card?.card?.["@type"] === "type.googleapis.com/swiggy.presentation.food.v2.Restaurant"
-                );
-
-                if (!restaurantCards || restaurantCards.length === 0) {
-                    throw new Error('No restaurant data found in response');
-                }
-
-                const restaurantsList = restaurantCards.map(card => card.card.card.info);
-                console.log('Processed restaurants list:', restaurantsList);
-
-                setRestaurants(restaurantsList);
-                setError(null);
-            } catch (error) {
-                console.error('Error fetching restaurants:', error);
-                setError(error.message);
+            setError(null);
+        } catch (error) {
+            console.error('Error fetching restaurants:', error);
+            setError(error.message);
+            if (currentOffsetIndex === 0) {
                 setRestaurants([]);
-            } finally {
-                setLoading(false);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [collection_id, tags, currentOffsetIndex]);
+
+    // Initial load
+    useEffect(() => {
+        if (!collection_id || !tags) return;
+        setLoading(true);
+        fetchRestaurants(offsetSequence[0]);
+    }, [collection_id, tags, fetchRestaurants]);
+
+    // Infinite scroll handler
+    useEffect(() => {
+        const handleScroll = () => {
+            if (
+                window.innerHeight + document.documentElement.scrollTop
+                === document.documentElement.offsetHeight
+            ) {
+                if (!loading && hasMore && currentOffsetIndex < offsetSequence.length - 1) {
+                    setLoading(true);
+                    setCurrentOffsetIndex(prev => prev + 1);
+                    fetchRestaurants(offsetSequence[currentOffsetIndex + 1]);
+                }
             }
         };
 
-        fetchRestaurants();
-    }, [collection_id, tags]);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [loading, hasMore, currentOffsetIndex, fetchRestaurants]);
 
     return (
         <div>
@@ -106,15 +142,21 @@ export default function CollectionPage() {
                     </div>
                 </div>
 
-                {loading ? (
-                    <RestaurantSkeleton />
-                ) : error ? (
+                <ResturantCard restaurants={restaurants} />
+
+                {loading && <RestaurantSkeleton />}
+
+                {error && currentOffsetIndex === 0 && (
                     <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
                         <h2>Error loading restaurants</h2>
                         <p>{error}</p>
                     </div>
-                ) : (
-                    <ResturantCard restaurants={restaurants} />
+                )}
+
+                {!hasMore && !loading && restaurants.length > 0 && (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <p>No more restaurants to load</p>
+                    </div>
                 )}
             </main>
         </div>
