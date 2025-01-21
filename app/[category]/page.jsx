@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import { redirect } from 'next/navigation';
 import ResturantCard from "@/app/restaurants/components/ResturantCard";
 import RestaurantSkeleton from "@/app/restaurants/components/RestaurantSkeleton";
+import ResturantFilter from "@/app/restaurants/components/ResturantFilter";
 
 export default function CollectionPage() {
     const searchParams = useSearchParams();
@@ -142,6 +143,7 @@ export default function CollectionPage() {
                     </div>
                 </div>
 
+                <ResturantFilter />
                 <ResturantCard restaurants={restaurants} />
 
                 {loading && <RestaurantSkeleton />}
