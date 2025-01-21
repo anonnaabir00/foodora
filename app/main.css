@@ -12,19 +12,23 @@ main{
   font-family: 'Product Sans';
   src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
 }*/
+/*h1, h2, h3, h4, h5, h6, p, a, span, button, input, select, optgroup, textarea{*/
+/*    !*    font-family: "ProductSans-Regular", Sans-serif;*!*/
+/*    font-family: 'Product Sans', sans-serif;*/
+/*}*/
+
 h1, h2, h3, h4, h5, h6, p, a, span, button, input, select, optgroup, textarea{
-    /*    font-family: "ProductSans-Regular", Sans-serif;*/
-    font-family: 'Product Sans', sans-serif;
+    font-family: "Plus Jakarta Sans", serif;
 }
 h2{
-    font-size: 30px;
+    font-size: 24px;
     line-height: 40px;
-    font-weight: 600;
+    font-weight: 800;
 }
 h3{
-    font-size: 18px;
+    font-size: 16px;
     line-height: 25px;
-    font-weight: 600;
+    font-weight: 800;
 }
 h4{
     font-size: 16px;
@@ -170,7 +174,8 @@ button.log_in:hover{
     position: relative;
 }
 .search_field {
-    margin-top: 60px;
+    margin-top: 40px;
+    margin-left: -0.5rem;
 }
 .search_field form.e-search-form  .e-search-input-wrapper{
     width: 100%;
@@ -182,26 +187,27 @@ button.log_in:hover{
     border-style: solid;
     border-width: 1px 1px 1px 1px;
     border-color: #CBD5E1;
-    border-radius: 10px 10px 10px 10px;
-    padding: 17px 20px 17px 45px;
+    border-radius: 30px 30px 30px 30px;
+    padding: 17px 20px 17px 20px;
 }
 .e-search-input-wrapper {
     position: relative;
 }
-.e-search-input-wrapper:before {
-    content: "";
-    background-image: url('/images/Search.png'); /* Path to the image in the public folder */
-    position: absolute;
-    width: 19px;
-    height: 19px;
-    background-size: contain;
-    z-index: 99;
-    left: 15px;
-    background-repeat: no-repeat;
-    top: 20px;
-}
+/*.e-search-input-wrapper:before {*/
+/*    content: "";*/
+/*    background-image: url('/images/Search.png'); !* Path to the image in the public folder *!*/
+/*    position: absolute;*/
+/*    width: 19px;*/
+/*    height: 19px;*/
+/*    background-size: contain;*/
+/*    z-index: 99;*/
+/*    left: 15px;*/
+/*    background-repeat: no-repeat;*/
+/*    top: 20px;*/
+/*}*/
 .e-search-form button.e-search-submit {
-    background-color: #F1F5F9;
+    background-color: #F55204;
+    color: #FFFFFF;
     border-style: solid;
     border-width: 1px 1px 1px 1px;
     border-color: #E2E8F0;
@@ -209,7 +215,7 @@ button.log_in:hover{
     right: 12px;
     top: 18%;
     font-weight: 400;
-    border-radius: 6px;
+    border-radius: 30px;
     padding: 8px 14px;
     font-size: 14px;
     line-height: 20px;
@@ -476,8 +482,8 @@ p.location-item a {
 }
 .container.food-icons_inner .icon-list p{
     color: #1E293B;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 400;
     font-style: normal;
 }
 .breadcrumb_list {
@@ -500,9 +506,9 @@ p.location-item a {
     margin-bottom: 38px;
 }
 h3.restaurant-name {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 25px;
-    font-weight: 600;
+    font-weight: 800;
 }
 p.restaurant-address {
     font-size: 16px;
@@ -1715,7 +1721,7 @@ form#signin-form button.submit-btn {
         height: auto;
     }
     .container.recommended-section-inner h2.recommended-heading {
-        font-size: 24px;
+        font-size: 20px;
         line-height: 30px;
     }
     .breadcrumb_list {

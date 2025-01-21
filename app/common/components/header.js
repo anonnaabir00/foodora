@@ -44,31 +44,31 @@ export default function Header() {
 
     return (
         <header>
-            <div className="header">
-                <div className="container">
+            <div className="heade tw-shadow-lg tw-z-50">
+                <div className="container-fluid">
                     <div className="row">
                         <div className="header_sec">
-                            <div className="logo">
+                            <div className="logo tw-pl-6">
                                 <Link href="/">
                                     <img src="/images/Vector-1.png" alt="Logo" />
                                 </Link>
                             </div>
-                            <div className="login_button">
-                                {/* Conditionally render buttons based on login state */}
-                                {isLoggedIn ? (
-                                    <button className="sign_up" onClick={handleLogout}>
-                                        Logout
-                                    </button>
-                                ) : (
-                                    <>
-                                        <button className="sign_up" onClick={showModal}>Sign Up</button>
-                                        <button className="log_in" onClick={showModal}>Log In</button>
-                                    </>
-                                )}
-                                <button className="popup-btn" onClick={toggleCart}>
-                                    <img src="/images/cart-button.png" alt="Cart" />
-                                </button>
-                            </div>
+                            {/*<div className="login_button">*/}
+                            {/*    /!* Conditionally render buttons based on login state *!/*/}
+                            {/*    {isLoggedIn ? (*/}
+                            {/*        <button className="sign_up" onClick={handleLogout}>*/}
+                            {/*            Logout*/}
+                            {/*        </button>*/}
+                            {/*    ) : (*/}
+                            {/*        <>*/}
+                            {/*            <button className="sign_up" onClick={showModal}>Sign Up</button>*/}
+                            {/*            <button className="log_in" onClick={showModal}>Log In</button>*/}
+                            {/*        </>*/}
+                            {/*    )}*/}
+                            {/*    <button className="popup-btn" onClick={toggleCart}>*/}
+                            {/*        <img src="/images/cart-button.png" alt="Cart" />*/}
+                            {/*    </button>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

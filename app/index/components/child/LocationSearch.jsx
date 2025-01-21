@@ -186,7 +186,7 @@ export default function LocationSearch() {
                         <div className="e-search-input-wrapper" style={{ position: 'relative' }}>
                             <input
                                 id="search-214b6a7"
-                                placeholder="Deine Adresse, z.B. Mariahilfer Str. 103"
+                                placeholder="Full Address"
                                 className="e-search-input"
                                 type="text"
                                 value={query}
@@ -226,27 +226,7 @@ export default function LocationSearch() {
 
                             {!query && (
                                 <button className="e-search-submit" type="submit">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 14 14"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M11.3898 1.09226C12.328 0.779557 13.2204 1.67204 12.9077 2.61015L10.0734 11.1133C9.74497 12.0985 8.40512 12.2297 7.8918 11.327L6.40778 8.71715C6.14087 8.24775 5.75221 7.85909 5.28281 7.59218L2.67304 6.1082C1.77031 5.59488 1.90155 4.25502 2.88673 3.92663L11.3898 1.09226Z"
-                                            stroke="#0F172A"
-                                            strokeWidth="1.5"
-                                        />
-                                        <path
-                                            d="M7.52382 6.47621L6.19049 7.80955"
-                                            stroke="#0F172A"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                    <span className="near-me">Near Me</span>
+                                    <span className="near-me">Search</span>
                                 </button>
                             )}
 
@@ -266,13 +246,13 @@ export default function LocationSearch() {
                     </form>
                 </div>
                 <div className="col-md-4">
-                    <button
-                        className="banner_button"
-                        onClick={handleEssenFindenClick}
-                        disabled={fetchingLocation}
-                    >
-                        <span>Essen Finden</span>
-                    </button>
+                    {/*<button*/}
+                    {/*    className="banner_button"*/}
+                    {/*    onClick={handleEssenFindenClick}*/}
+                    {/*    disabled={fetchingLocation}*/}
+                    {/*>*/}
+                    {/*    <span>Essen Finden</span>*/}
+                    {/*</button>*/}
                 </div>
             </div>
         </div>

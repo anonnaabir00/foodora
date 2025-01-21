@@ -5,34 +5,64 @@ import { useRouter } from 'next/navigation';
 export default function ResturantFilter() {
     const router = useRouter();
 
+    const morning = [
+        { id: '80440', name: 'Idli', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Idli.png', tags: 'layout_CCS_Idli' },
+        { id: '80424', name: 'Dosa', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Dosa.png', tags: 'layout_CCS_Dosa' },
+        { id: '80451', name: 'Poha', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Poha.png', tags: 'layout_CCS_Poha' },
+        { id: '80451', name: 'Vada', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Vada.png', tags: 'layout_CCS_Vada' },
+        { id: '80475', name: 'Paratha', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Paratha.png', tags: 'layout_CCS_Paratha' },
+        { id: '80475', name: 'Omelette', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Omelette.png', tags: 'layout_CCS_Omelette' },
+        { id: '80382', name: 'Chole Bhature', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Chole%20Bhature.png', tags: 'layout_CCS_CholeBhature' },
+        { id: '83655', name: 'Coffee', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Coffee.png', tags: 'layout_CCS_Coffee' },
+        { id: '80451', name: 'Dhokla', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Dhokla.png', tags: 'layout_CCS_Dhokla' },
+        { id: '80451', name: 'Pongal', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Poha-1.png', tags: 'layout_CCS_Pongal' },
+        { id: '80451', name: 'Kachori', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Kachori.png', tags: 'layout_CCS_Kachori' },
+        { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
+        { id: '80377', name: 'Poori', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Poori.png', tags: 'layout_BAU_Contextual,poori' },
+        { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
+    ]
 
-    const collections = [
-        { id: '83637', name: 'Burger', image: './images/Group 241.png', tags: 'layout_CCS_Burger' },
-        { id: '83631', name: 'Pizza', image: './images/Group 241 (1).png', tags: 'layout_CCS_Pizza' },
-        { id: '83636', name: 'Snack', image: './images/Group 241 (2).png', tags: 'layout_CCS_Snack' },
-        { id: '83639', name: 'Chicken', image: './images/Group 241 (3).png', tags: 'layout_CCS_Chicken' },
-        { id: '83655', name: 'Coffee', image: './images/Group 241 (4).png', tags: 'layout_CCS_Coffee' },
-        { id: '83640', name: 'Breads', image: './images/Group 241 (5).png', tags: 'layout_CCS_Breads' },
-        { id: '83655', name: 'Cake', image: './images/Group 241 (6).png', tags: 'layout_CCS_Cake' },
-        { id: '80424', name: 'Dosa', image: './images/Group 241 (7).png', tags: 'layout_CCS_Dosa' },
-        { id: '80451', name: 'Hotdog', image: './images/Group 241 (8).png', tags: 'layout_CCS_Hotdog' },
-        { id: '83633', name: 'North Indian', image: './images/Group 241 (9).png', tags: 'layout_CCS_NorthIndian' },
-        { id: '83634', name: 'South Indian', image: './images/Group 241 (10).png', tags: 'layout_CCS_SouthIndian' },
-        { id: '80435', name: 'Pure Veg', image: './images/Group 241 (11).png', tags: 'layout_CCS_PureVeg' },
-        { id: '80479', name: 'Pasta', image: './images/Group 241 (12).png', tags: 'layout_CCS_Pasta' },
-        { id: '80394', name: 'Salad', image: './images/Group 241 (13).png', tags: 'layout_CCS_Salad' },
-        { id: '80463', name: 'Noodles', image: './images/Group 241 (14).png', tags: 'layout_BAU_Contextual,noodles' },
-        { id: '80382', name: 'Chole Bhature', image: './images/Group 241 (15).png', tags: 'layout_CCS_CholeBhature' },
-        { id: '80475', name: 'Paratha', image: './images/Group 241 (16).png', tags: 'layout_CCS_Paratha' },
-        { id: '83669', name: 'Rolls', image: './images/Group 241 (17).png', tags: 'layout_CCS_Rolls' },
-        { id: '80440', name: 'Idli', image: './images/Group 241 (18).png', tags: 'layout_CCS_Idli' },
-        { id: '80402', name: 'Shawarma', image: './images/Group 241 (19).png', tags: 'layout_Shawarma_Contextual' },
-        { id: '83673', name: 'Shakes', image: './images/Group 241 (20).png', tags: 'layout_CCS_Shakes' },
-        { id: '80377', name: 'Poori', image: './images/Group 241 (21).png', tags: 'layout_BAU_Contextual,poori' },
-        { id: '80355', name: 'Pastry', image: './images/Group 241 (22).png', tags: 'layout_CCS_Pastry' },
-        { id: '83640', name: 'Ice Cream', image: './images/Group 241 (23).png', tags: 'layout_CCS_IceCreams' },
-        { id: '80451', name: 'Kebabs', image: './images/Group 241 (24).png', tags: 'layout_CCS_Kebabs' }
-    ];
+    const afternoon = [
+        { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
+        { id: '83631', name: 'Pizza', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pizza.png', tags: 'layout_CCS_Pizza' },
+        { id: '83637', name: 'Burger', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Burger.png', tags: 'layout_CCS_Burger' },
+        { id: '83633', name: 'North Indian', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/North%20Indian.png', tags: 'layout_CCS_NorthIndian' },
+        { id: '83669', name: 'Rolls', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Rolls.png', tags: 'layout_CCS_Rolls' },
+        { id: '80435', name: 'Pure Veg', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pure%20Veg.png', tags: 'layout_CCS_PureVeg' },
+        { id: '80451', name: 'Chinese', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Chinese.png', tags: 'layout_CCS_Chinese' },
+        { id: '80479', name: 'Pasta', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pasta.png', tags: 'layout_CCS_Pasta' },
+        { id: '80402', name: 'Shawarma', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shawarma.png', tags: 'layout_Shawarma_Contextual' },
+        { id: '83640', name: 'Ice Cream', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Ice%20Cream.png', tags: 'layout_CCS_IceCreams' },
+        { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
+    ]
+
+    const evening = [
+        { id: '83631', name: 'Pizza', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pizza.png', tags: 'layout_CCS_Pizza' },
+        { id: '83637', name: 'Burger', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Burger.png', tags: 'layout_CCS_Burger' },
+        { id: '80451', name: 'Chinese', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Chinese.png', tags: 'layout_CCS_Chinese' },
+        { id: '80451', name: 'Momo', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Momo.png', tags: 'layout_CCS_Momo' },
+        { id: '83669', name: 'Rolls', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Rolls.png', tags: 'layout_CCS_Rolls' },
+        { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
+        { id: '80402', name: 'Shawarma', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shawarma.png', tags: 'layout_Shawarma_Contextual' },
+        { id: '80355', name: 'Pastry', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pastry.png', tags: 'layout_CCS_Pastry' },
+        { id: '80451', name: 'Pakoda', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pakoda.png', tags: 'layout_CCS_Pakoda' },
+        { id: '83673', name: 'Shakes', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shake', tags: 'layout_CCS_Shakes' },
+        { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
+    ]
+
+    const night = [
+        { id: '83631', name: 'Pizza', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pizza.png', tags: 'layout_CCS_Pizza' },
+        { id: '83637', name: 'Burger', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Burger.png', tags: 'layout_CCS_Burger' },
+        { id: '83633', name: 'North Indian', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/North%20Indian.png', tags: 'layout_CCS_NorthIndian' },
+        { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
+        { id: '80435', name: 'Pure Veg', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pure%20Veg.png', tags: 'layout_CCS_PureVeg' },
+        { id: '83634', name: 'South Indian', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/South%20Indian.png', tags: 'layout_CCS_SouthIndian' },
+        { id: '80402', name: 'Shawarma', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shawarma.png', tags: 'layout_Shawarma_Contextual' },
+        { id: '80451', name: 'Kebabs', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Kebab.png', tags: 'layout_CCS_Kebabs' },
+        { id: '80355', name: 'Pastry', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pastry.png', tags: 'layout_CCS_Pastry' },
+        { id: '83640', name: 'Ice Cream', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Ice%20Cream.png', tags: 'layout_CCS_IceCreams' },
+        { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
+    ]
 
     // Handle click to navigate to the category page with query parameters
     const handleCollectionClick = (collection) => {
@@ -42,14 +72,14 @@ export default function ResturantFilter() {
     return (
         <div className="food-icons">
             <div className="container food-icons_inner">
-                {collections.map((collection) => (
+                {afternoon.map((collection) => (
                     <div
                         key={collection.id}
                         className="icon-list"
                         onClick={() => handleCollectionClick(collection)}
                     >
-                        <img src={collection.image} alt={collection.name} />
-                        <p>{collection.name}</p>
+                        <img className="tw-w-[90px]" src={collection.image} alt={collection.name} />
+                        {/*<p>{collection.name}</p>*/}
                     </div>
                 ))}
             </div>

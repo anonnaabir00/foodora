@@ -225,7 +225,7 @@ export default function Checkout() {
                                         </div>
                                         <div className="item-title">
                                             <h3>{item.name}</h3>
-                                            <div className="item-price">
+                                            <div className="item-price !tw-mt-3 !tw-mb-2">
                                                 <p>
                                                     {item.originalPrice && (
                                                         <del>₹{formatPrice(item.originalPrice)}</del>
