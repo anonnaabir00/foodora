@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function ResturantFilter() {
     const router = useRouter();
+    const [currentData, setCurrentData] = useState([]);
 
     const morning = [
         { id: '80440', name: 'Idli', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Idli.png', tags: 'layout_CCS_Idli' },
@@ -20,7 +22,7 @@ export default function ResturantFilter() {
         { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
         { id: '80377', name: 'Poori', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Poori.png', tags: 'layout_BAU_Contextual,poori' },
         { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
-    ]
+    ];
 
     const afternoon = [
         { id: '83637', name: 'Biryani', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Biryani.png', tags: 'layout_CCS_Biryani' },
@@ -34,7 +36,7 @@ export default function ResturantFilter() {
         { id: '80402', name: 'Shawarma', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shawarma.png', tags: 'layout_Shawarma_Contextual' },
         { id: '83640', name: 'Ice Cream', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Ice%20Cream.png', tags: 'layout_CCS_IceCreams' },
         { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
-    ]
+    ];
 
     const evening = [
         { id: '83631', name: 'Pizza', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pizza.png', tags: 'layout_CCS_Pizza' },
@@ -48,7 +50,7 @@ export default function ResturantFilter() {
         { id: '80451', name: 'Pakoda', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pakoda.png', tags: 'layout_CCS_Pakoda' },
         { id: '83673', name: 'Shakes', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Shake', tags: 'layout_CCS_Shakes' },
         { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
-    ]
+    ];
 
     const night = [
         { id: '83631', name: 'Pizza', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pizza.png', tags: 'layout_CCS_Pizza' },
@@ -62,7 +64,40 @@ export default function ResturantFilter() {
         { id: '80355', name: 'Pastry', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Pastry.png', tags: 'layout_CCS_Pastry' },
         { id: '83640', name: 'Ice Cream', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Ice%20Cream.png', tags: 'layout_CCS_IceCreams' },
         { id: '83655', name: 'Cake', image: 'https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/PC_Mweb/Cake.png', tags: 'layout_CCS_Cake' },
-    ]
+    ];
+
+    // Function to get current Indian time (IST)
+    const getIndianTime = () => {
+        const now = new Date();
+        const options = { timeZone: 'Asia/Kolkata' };
+        const ISTTime = now.toLocaleString('en-IN', options);
+        console.log(`Current Indian Time: ${ISTTime}`);
+        return new Date(now.toLocaleString('en-US', options));
+    };
+
+    // Function to determine which array to load based on time
+    const getCurrentData = () => {
+        const now = getIndianTime();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const currentTime = hours * 100 + minutes; // Convert to HHMM format for easier comparison
+
+        if (currentTime >= 200 && currentTime < 1130) {
+            return morning;
+        } else if (currentTime >= 1130 && currentTime < 1600) {
+            return afternoon;
+        } else if (currentTime >= 1600 && currentTime < 1830) {
+            return evening;
+        } else {
+            return night;
+        }
+    };
+
+    // Load data based on current time
+    useEffect(() => {
+        const data = getCurrentData();
+        setCurrentData(data);
+    }, []);
 
     // Handle click to navigate to the category page with query parameters
     const handleCollectionClick = (collection) => {
@@ -72,7 +107,7 @@ export default function ResturantFilter() {
     return (
         <div className="food-icons">
             <div className="container food-icons_inner">
-                {afternoon.map((collection) => (
+                {currentData.map((collection) => (
                     <div
                         key={collection.id}
                         className="icon-list"
