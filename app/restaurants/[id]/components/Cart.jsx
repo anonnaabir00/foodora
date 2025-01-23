@@ -1,20 +1,62 @@
-// Cart.jsx
 import React, { useState, useEffect } from 'react';
 import { getCartItems, removeFromCart, updateQuantity } from './cartUtils';
 
-export default function Cart({ onClose, cartUpdated }) {
+export default function Cart({ onClose, cartUpdated, onCustomizeItem }) {
     const [cartItems, setCartItems] = useState([]);
+    const [isCouponApplied, setIsCouponApplied] = useState(false); // Track if coupon is applied
+    const [discount, setDiscount] = useState(0); // Track discount amount
+
+    // Calculate total price before discount
+    const totalPriceBeforeDiscount = cartItems.reduce((total, item) => {
+        const itemPrice = item.finalPrice || item.price;
+        return total + (itemPrice * item.quantity);
+    }, 0);
+
+    // Apply the "Welcome" coupon
+    const applyWelcomeCoupon = () => {
+        setIsCouponApplied(true);
+        if (totalPriceBeforeDiscount < 500) {
+            // If total is less than ₹500, reduce it to ₹75
+            setDiscount(totalPriceBeforeDiscount - 75);
+        } else {
+            // If total is ₹500 or more, reduce it by ₹425
+            setDiscount(425);
+        }
+    };
+
+    // Remove the coupon
+    const removeCoupon = () => {
+        setIsCouponApplied(false);
+        setDiscount(0);
+    };
+
+    // Calculate total price after discount
+    const totalPriceAfterDiscount = isCouponApplied
+        ? totalPriceBeforeDiscount < 500
+            ? 75 // If total is less than ₹500, set it to ₹75
+            : totalPriceBeforeDiscount - 425 // If total is ₹500 or more, reduce it by ₹425
+        : totalPriceBeforeDiscount; // No discount if coupon is not applied
 
     useEffect(() => {
         const items = getCartItems();
         console.log("Cart Items loaded:", items);
         setCartItems(items);
-    }, [cartUpdated]);
 
-    const totalPrice = cartItems.reduce((total, item) => {
-        const itemPrice = item.finalPrice || item.price;
-        return total + (itemPrice * item.quantity);
-    }, 0);
+        // Automatically apply the "Welcome" coupon if it's the first item in the cart
+        if (items.length === 1 && !isCouponApplied) {
+            applyWelcomeCoupon();
+        }
+
+        // Automatically remove the coupon if the cart is empty
+        if (items.length === 0) {
+            removeCoupon();
+        }
+
+        // Reapply the coupon if the cart value changes and the coupon is applied
+        if (isCouponApplied) {
+            applyWelcomeCoupon();
+        }
+    }, [cartUpdated, totalPriceBeforeDiscount]); // Add totalPriceBeforeDiscount to dependencies
 
     const handleIncreaseQuantity = (item) => {
         const itemId = item.cartItemId || item.id;
@@ -53,12 +95,14 @@ export default function Cart({ onClose, cartUpdated }) {
         window.location.href = '/checkout';
     };
 
+    const handleCustomize = (item) => {
+        if (onCustomizeItem) {
+            onCustomizeItem(item); // Pass the item to the parent component (RestaurantMenu)
+        }
+    };
+
     return (
         <div className="cart-content">
-            {/*<div className="cart-heading">*/}
-            {/*    <h3>Your Cart ({cartItems.length})</h3>*/}
-            {/*    <p>Review your items before checking out.</p>*/}
-            {/*</div>*/}
             <div className="cart-items-list">
                 <div className="cart-items-box-wrap">
                     {cartItems.length === 0 ? (
@@ -80,23 +124,23 @@ export default function Cart({ onClose, cartUpdated }) {
                                     </div>
                                     <div className="item-title">
                                         <h3 className="truncate">{item.name}</h3>
-                                        {/*{item.selectedAddons && item.selectedAddons.length > 0 && (*/}
-                                        {/*    <div className="selected-addons">*/}
-                                        {/*        {item.selectedAddons.map((addon, index) => (*/}
-                                        {/*            <small*/}
-                                        {/*                key={index}*/}
-                                        {/*                style={{*/}
-                                        {/*                    color: '#666',*/}
-                                        {/*                    fontSize: '0.85em',*/}
-                                        {/*                    display: 'block',*/}
-                                        {/*                    marginTop: '2px'*/}
-                                        {/*                }}*/}
-                                        {/*            >*/}
-                                        {/*                {addon.name} {formatAddonPrice(addon)}*/}
-                                        {/*            </small>*/}
-                                        {/*        ))}*/}
-                                        {/*    </div>*/}
-                                        {/*)}*/}
+                                        {item.selectedAddons && item.selectedAddons.length > 0 && (
+                                            <div className="selected-addons">
+                                                {item.selectedAddons.map((addon, index) => (
+                                                    <small
+                                                        key={index}
+                                                        style={{
+                                                            color: '#666',
+                                                            fontSize: '0.85em',
+                                                            display: 'block',
+                                                            marginTop: '2px'
+                                                        }}
+                                                    >
+                                                        {addon.name} {formatAddonPrice(addon)}
+                                                    </small>
+                                                ))}
+                                            </div>
+                                        )}
                                         <div className="item-price">
                                             <p><span><sup>₹</sup>{getItemPrice(item)}</span></p>
                                             <div className="qnt-box">
@@ -112,6 +156,14 @@ export default function Cart({ onClose, cartUpdated }) {
                                                 >+
                                                 </button>
                                             </div>
+                                            {item.addons && item.addons.length > 0 && (
+                                                <button
+                                                    className="customize-btn"
+                                                    onClick={() => handleCustomize(item)}
+                                                >
+                                                    Customize
+                                                </button>
+                                            )}
                                             <button
                                                 className="trash-icon"
                                                 onClick={() => handleRemoveItem(item)}
@@ -138,15 +190,15 @@ export default function Cart({ onClose, cartUpdated }) {
                     <div className="item-details-list-wrap">
                         <div className="item-list-count">
                             <h4>Sub Total</h4>
-                            <h3>₹{totalPrice.toFixed(2)}</h3>
+                            <h3>₹{totalPriceBeforeDiscount.toFixed(2)}</h3>
                         </div>
                         <div className="item-list-count">
                             <h4>Discount</h4>
-                            <h3>₹0.00</h3>
+                            <h3>₹{discount.toFixed(2)}</h3>
                         </div>
                         <div className="item-list-count item-total-count">
                             <h4>Total</h4>
-                            <h3>₹{totalPrice.toFixed(2)}</h3>
+                            <h3>₹{totalPriceAfterDiscount.toFixed(2)}</h3>
                         </div>
                     </div>
                 </div>

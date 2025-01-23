@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Drawer, Modal, Radio, Checkbox, Button } from "antd";
-import { addToCart } from './cartUtils';
+import { addToCart, updateQuantity, getCartItems, removeFromCart } from './cartUtils'; // Import cart utility functions
 import Cart from './Cart';
-import CartBar from "@/app/restaurants/[id]/components/CartBar";
+
+const useScreenSize = () => {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    return isMobile;
+};
 
 const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [basePrice] = useState(item?.price || item?.defaultPrice || 0);
 
-    // Reset state when modal opens
     useEffect(() => {
         if (visible) {
             setSelectedOptions({});
@@ -21,21 +36,18 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
         const groupId = group.groupId;
 
         if (group.maxAddons > 1) {
-            // Handle multiple selections with checkboxes
             setSelectedOptions(prev => {
                 const currentSelections = prev[groupId] || [];
                 const isSelected = currentSelections.some(item => item.id === choice.id);
 
                 let newSelections;
                 if (isSelected) {
-                    // Remove if already selected
                     newSelections = currentSelections.filter(item => item.id !== choice.id);
                 } else {
-                    // Add if not selected and within maxAddons limit
                     if (currentSelections.length < group.maxAddons) {
                         newSelections = [...currentSelections, choice];
                     } else {
-                        return prev; // Don't update if max limit reached
+                        return prev;
                     }
                 }
 
@@ -45,7 +57,6 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
                 };
             });
         } else {
-            // Handle single selection with radio
             setSelectedOptions(prev => ({
                 ...prev,
                 [groupId]: [choice]
@@ -54,7 +65,7 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
     };
 
     const calculateTotalPrice = () => {
-        const itemBasePrice = item?.price || item?.defaultPrice || 0; // Use actual item price directly
+        const itemBasePrice = item?.price || item?.defaultPrice || 0;
         const addonsPrice = Object.values(selectedOptions).flat().reduce((total, choice) => {
             return total + (choice?.price || 0) / 100;
         }, 0);
@@ -69,22 +80,20 @@ const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
             ...item,
             selectedAddons: selectedAddons,
             finalPrice: finalPrice,
-            cartItemId: `${item.id}-${Date.now()}`
+            cartItemId: `${item.id}-${Date.now()}` // Unique ID for customized product
         };
 
         onAddToCart(customizedItem);
         onClose();
     };
 
-    // Dynamic grouping of addons
     const groupedAddons = item?.addons?.reduce((acc, group) => {
-        const groupKey = group.groupName; // Use the original group name as key
+        const groupKey = group.groupName;
         acc[groupKey] = acc[groupKey] || [];
         acc[groupKey].push(group);
         return acc;
     }, {});
 
-    // Create steps dynamically with optional sorting
     const stepOrder = {
         'cheese': 1,
         'toppings': 2,
@@ -343,12 +352,32 @@ function processMenuData(menuData) {
 }
 
 export default function RestaurantMenu({ menuData, restaurantInfo }) {
+    const numberOfItems = getCartItems().length;
     const [isCartVisible, setIsCartVisible] = useState(false);
     const [cartUpdated, setCartUpdated] = useState(false);
     const [showVeg, setShowVeg] = useState(false);
     const [showNonVeg, setShowNonVeg] = useState(false);
     const [customizeModalVisible, setCustomizeModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [itemQuantities, setItemQuantities] = useState({}); // State to track quantities
+
+    const isMobile = useScreenSize();
+
+    const isItemInCart = (itemId) => {
+        const cartItems = getCartItems();
+        return cartItems.some(item => (item.cartItemId || item.id) === itemId);
+    };
+
+    useEffect(() => {
+        const cartItems = getCartItems();
+        const initialQuantities = {};
+        cartItems.forEach(item => {
+            // Use cartItemId if available, otherwise use id
+            const uniqueId = item.cartItemId || item.id;
+            initialQuantities[uniqueId] = item.quantity || 1;
+        });
+        setItemQuantities(initialQuantities);
+    }, [cartUpdated]); //
 
     const processedMenu = menuData ? processMenuData(menuData) : [];
     console.log("Processed Menu:", processedMenu);
@@ -374,18 +403,47 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
             addToCart(item);
             setIsCartVisible(true);
             setCartUpdated((prev) => !prev);
+            setItemQuantities(prev => ({ ...prev, [item.id]: 1 })); // Set initial quantity to 1
+        }
+    };
+
+    const handleQuantityChange = (itemId, newQuantity) => {
+        if (newQuantity < 1) {
+            updateQuantity(itemId, 0);
+            removeFromCart(itemId);
+            setItemQuantities(prev => {
+                const updatedQuantities = { ...prev };
+                delete updatedQuantities[itemId];
+                return updatedQuantities;
+            });
+            setCartUpdated(prev => !prev);
+        } else {
+            setItemQuantities(prev => ({ ...prev, [itemId]: newQuantity }));
+            updateQuantity(itemId, newQuantity);
+            setCartUpdated(prev => !prev);
         }
     };
 
     const handleCustomizedAddToCart = (customizedItem) => {
-        console.log("Before adding to cart:", customizedItem); // Debug log
         addToCart(customizedItem);
         setIsCartVisible(true);
         setCartUpdated(prev => !prev);
+
+        // Use cartItemId for tracking customized item quantities
+        setItemQuantities(prev => ({
+            ...prev,
+            [customizedItem.cartItemId]: 1
+        }));
+
         setCustomizeModalVisible(false);
     };
 
-    // Filter items based on veg/non-veg selection
+    const handleCustomizeItem = (item) => {
+        setIsCartVisible(false);
+        setSelectedItem(item); // Set the selected item for customization
+        setCustomizeModalVisible(true); // Open the customization modal
+    };
+
     const getFilteredItems = (items) => {
         if (!showVeg && !showNonVeg) return items; // Show all items if no filter is selected
         return items.filter(item => {
@@ -396,7 +454,6 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
         });
     };
 
-    // Filter categories and their items
     const filteredMenu = processedMenu.map(category => ({
         ...category,
         items: getFilteredItems(category.items)
@@ -404,135 +461,183 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
 
     return (
         <>
-        <div className="container">
-            <div className="foot-types">
-                <div className="container foot-type-inner">
-                    <div className="toggle-box">
-                        <div className="toggle toggle-green">
-                            <input
-                                type="checkbox"
-                                id="mode-toggle"
-                                className="toggle__input"
-                                checked={showVeg}
-                                onChange={(e) => setShowVeg(e.target.checked)}
-                            />
-                            <label htmlFor="mode-toggle" className="toggle__label"></label>
+            <div className="container">
+                <div className="foot-types">
+                    <div className="container foot-type-inner">
+                        <div className="toggle-box">
+                            <div className="toggle toggle-green">
+                                <input
+                                    type="checkbox"
+                                    id="mode-toggle"
+                                    className="toggle__input"
+                                    checked={showVeg}
+                                    onChange={(e) => setShowVeg(e.target.checked)}
+                                />
+                                <label htmlFor="mode-toggle" className="toggle__label"></label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="toggle-box">
-                        <div className="toggle toggle-red">
-                            <input
-                                type="checkbox"
-                                id="non-toggle"
-                                className="toggle_red__input"
-                                checked={showNonVeg}
-                                onChange={(e) => setShowNonVeg(e.target.checked)}
-                            />
-                            <label htmlFor="non-toggle" className="toggle_red__label"></label>
+                        <div className="toggle-box">
+                            <div className="toggle toggle-red">
+                                <input
+                                    type="checkbox"
+                                    id="non-toggle"
+                                    className="toggle_red__input"
+                                    checked={showNonVeg}
+                                    onChange={(e) => setShowNonVeg(e.target.checked)}
+                                />
+                                <label htmlFor="non-toggle" className="toggle_red__label"></label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <Tabs
-                activeKey={selectedCategory}
-                onChange={(key) => setSelectedCategory(key)}
-                tabPosition="top"
-                tabBarStyle={{
-                    marginTop: '1rem',
-                    marginBottom: '2rem',
-                    borderRadius: "8px",
-                }}
-                tabBarGutter={40}
-            >
-                {filteredMenu.map((category) => (
-                    <Tabs.TabPane
-                        tab={
-                            <span className="custom-tab">
-                                {category.category} ({category.items.length})
-                            </span>
-                        }
-                        key={category.category}
-                    />
-                ))}
-            </Tabs>
-
-            <div className="menu-grid">
-                {filteredMenu.map((category) => (
-                    <div key={category.category} id={category.category}>
-                        <h2 className="category-title" style={{ marginBottom: '1rem' }}>
-                            {category.category}
-                        </h2>
-                        <div className="row" style={{ marginBottom: '2rem' }}>
-                            {category.items.map((item) => (
-                                <div key={item.id} className="col-md-4 item-details md:tw-mr-4 sm:tw-mr-0"
-                                     style={{marginBottom: '1rem'}}>
-                                    <div className="item-image">
-                                        {item.imageId && (
-                                            <img
-                                                src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`}
-                                                alt={item.name}
-                                                className="arrow-icon"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="item-title">
-                                        <div className="menu-item-title">
-                                            {item.isVeg === 1 &&
-                                                <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}
-                                            <h3>{item.name}</h3>
-                                        </div>
-                                        {/*<h3>{item.name}</h3>*/}
-                                        {/*{item.isVeg === 1 && <img className="arrow-icon" src="/images/Vector (2).png" alt="veg"/>}*/}
-                                        <div className="item-price">
-                                            <p>
-                                                <span><sup>₹</sup>{item.price}</span>
-                                            </p>
-                                            <a href="#" onClick={(e) => {
-                                                e.preventDefault();
-                                                handleAddToCart(item);
-                                            }}>Add</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <CustomizeModal
-                item={selectedItem}
-                visible={customizeModalVisible}
-                onClose={() => setCustomizeModalVisible(false)}
-                onAddToCart={handleCustomizedAddToCart}
-            />
-
-            <Drawer
-                title={null}
-                placement="right"
-                onClose={() => setIsCartVisible(false)}
-                open={isCartVisible}
-                width={450}
-            >
-                <button
-                    className="popup-close-btn"
-                    onClick={() => setIsCartVisible(false)} // Pass a function to close the drawer
+                <Tabs
+                    activeKey={selectedCategory}
+                    onChange={(key) => setSelectedCategory(key)}
+                    tabPosition="top"
+                    tabBarStyle={{
+                        marginTop: '1rem',
+                        marginBottom: '2rem',
+                        borderRadius: "8px",
+                    }}
+                    tabBarGutter={40}
                 >
-                    <img className="arrow-icon" src="/images/Subtract.svg" alt="Close"/>
-                </button>
-                <div className="cart-heading">
-                    <h3>Your Cart</h3>
-                    <p>Review your items before checking out.</p>
+                    {filteredMenu.map((category) => (
+                        <Tabs.TabPane
+                            tab={
+                                <span className="custom-tab">
+                                    {category.category} ({category.items.length})
+                                </span>
+                            }
+                            key={category.category}
+                        />
+                    ))}
+                </Tabs>
+
+                <div className="menu-grid">
+                    {filteredMenu.map((category) => (
+                        <div key={category.category} id={category.category}>
+                            <h2 className="category-title" style={{marginBottom: '1rem'}}>
+                                {category.category}
+                            </h2>
+                            <div className="row" style={{marginBottom: '2rem'}}>
+                                {category.items.map((item) => (
+                                    <div key={item.id} className="col-md-4 item-details md:tw-mr-4 sm:tw-mr-0"
+                                         style={{marginBottom: '1rem'}}>
+                                        <div className="item-image">
+                                            {item.imageId && (
+                                                <img
+                                                    src={`https://media-assets.swiggy.com/swiggy/image/upload/${item.imageId}`}
+                                                    alt={item.name}
+                                                    className="arrow-icon"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="item-title">
+                                            <div className="menu-item-title">
+                                                {item.isVeg === 1 &&
+                                                    <img className="arrow-icon" src="/images/Vector (2).png"
+                                                         alt="veg"/>}
+                                                <h3>{item.name}</h3>
+                                            </div>
+                                            <div className="item-price">
+                                                <p>
+                                                    <span><sup>₹</sup>{item.price}</span>
+                                                </p>
+                                                {(itemQuantities[item.cartItemId] || itemQuantities[item.id]) ? (
+                                                    <div className="quantity-selector">
+                                                        <button
+                                                            onClick={() => handleQuantityChange(item.cartItemId || item.id, (itemQuantities[item.cartItemId] || itemQuantities[item.id]) - 1)}>-
+                                                        </button>
+                                                        <span>{itemQuantities[item.cartItemId] || itemQuantities[item.id]}</span>
+                                                        <button
+                                                            onClick={() => handleQuantityChange(item.cartItemId || item.id, (itemQuantities[item.cartItemId] || itemQuantities[item.id]) + 1)}>+
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <a href="#" onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleAddToCart(item);
+                                                    }}>Add</a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                {/*<Cart onClose={() => setIsCartVisible(false)} key={cartUpdated ? 'updated' : 'not-updated'} />*/}
-                <Cart
-                    onClose={() => setIsCartVisible(false)}
-                    cartUpdated={cartUpdated}
+
+                <CustomizeModal
+                    item={selectedItem}
+                    visible={customizeModalVisible}
+                    onClose={() => setCustomizeModalVisible(false)}
+                    onAddToCart={handleCustomizedAddToCart}
                 />
-            </Drawer>
-        </div>
-            <CartBar />
+                {!isMobile ? (
+                    <Drawer
+                        title={null}
+                        placement="right"
+                        onClose={() => setIsCartVisible(false)}
+                        open={isCartVisible}
+                        width={450}
+                    >
+                        <button
+                            className="popup-close-btn"
+                            onClick={() => setIsCartVisible(false)}
+                        >
+                            <img className="arrow-icon" src="/images/Subtract.svg" alt="Close"/>
+                        </button>
+                        <div className="cart-heading">
+                            <h3>Your Cart</h3>
+                            <p>Review your items before checking out.</p>
+                        </div>
+                        <Cart
+                            onClose={() => setIsCartVisible(false)}
+                            cartUpdated={cartUpdated}
+                            onCustomizeItem={handleCustomizeItem}
+                        />
+                    </Drawer>
+                ) : (
+                    isCartVisible && (
+                        <Modal
+                            title="Your Cart"
+                            open={isCartVisible}
+                            onCancel={() => setIsCartVisible(false)}
+                            footer={null}
+                            className="mobile-cart-modal"
+                            width="100%"
+                            style={{
+                                top: 0,
+                                margin: 0,
+                                maxWidth: '100vw',
+                                height: '100vh',
+                                padding: '16px'
+                            }}
+                        >
+                            <Cart
+                                onClose={() => setIsCartVisible(false)}
+                                cartUpdated={cartUpdated}
+                                onCustomizeItem={handleCustomizeItem}
+                            />
+                        </Modal>
+                    )
+                )}
+            </div>
+            <div className="bottom-cart-button" onClick={() => setIsCartVisible(true)}>
+                <div className="container">
+                    <div className="row green-cart">
+                        <div className="item-value">
+                            <img className="arrow-icon" src="/images/Bag 3.svg"/>
+                            {numberOfItems} Items Added
+                        </div>
+                        <div className="item-cart-text">
+                            Cart <img className="arrow-icon" src="/images/Right Icon.svg"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

@@ -2599,3 +2599,30 @@ body {
   text-overflow: ellipsis;
   max-width: 200px;
 }
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  padding: 7px;
+  color: #30A34A;
+  border-radius: 0.5rem;
+}
+
+.quantity-selector button {
+  padding: 4px 8px;
+  border: none;
+  background-color: #fff;
+  color: #30A34A;
+  cursor: pointer;
+}
+
+.quantity-selector button:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity-selector span {
+  font-size: 18px;
+  font-weight: bold;
+}
