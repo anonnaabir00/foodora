@@ -78,9 +78,9 @@ export default function FeatureBox() {
     }, [currentSlide, cards.length]);
 
     return (
-        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-bg-gray-50 tw-p-12 md:tw-p-12">
+        <div className="tw-flex tw-flex-col tw-justify-center tw-items-center tw-bg-gray-50 tw-p-12 sm:tw-p-6">
             <p className="tw-text-gray-800 tw-text-xl tw-mb-6">Just Eat</p>
-            <h2 className="tw-text-[#f55204] tw-text-5xl tw-font-bold tw-mb-12">Your time.</h2>
+            <h2 className="tw-text-[#f55204] sm:tw-text-3xl md:sm:tw-text-5xl tw-font-bold tw-mb-12">Your time.</h2>
 
             {/* Mobile Layout */}
             <div className="md:tw-hidden tw-w-full">
@@ -96,10 +96,10 @@ export default function FeatureBox() {
                                 key={index}
                                 className="tw-min-w-full tw-snap-center tw-px-4"
                             >
-                                <div className="tw-bg-white tw-rounded-2xl tw-p-8 tw-shadow-sm tw-flex tw-flex-col tw-items-center">
+                                <div className="tw-bg-white tw-rounded-2xl tw-pt-8 tw-shadow-md tw-flex tw-flex-col tw-items-center tw-h-full">
                                     <Icon className="tw-w-12 tw-h-12 tw-text-[#f55204] tw-mb-6" />
                                     <h3 className="tw-text-xl tw-font-bold tw-text-gray-800 tw-mb-6">{card.title}</h3>
-                                    <ul className="tw-space-y-4 tw-w-full">
+                                    <ul className="tw-space-y-4 tw-w-full tw-pr-4">
                                         {card.items.map((item, itemIndex) => (
                                             <li key={itemIndex} className="tw-flex tw-items-start tw-gap-3">
                                                 <Check className="tw-w-5 tw-h-5 tw-mt-1 tw-text-gray-600 tw-flex-shrink-0" strokeWidth={3} />
@@ -112,7 +112,7 @@ export default function FeatureBox() {
                         );
                     })}
                 </div>
-                <div className="tw-flex tw-justify-center tw-gap-2 tw-mt-6">
+                <div className="tw-flex tw-justify-center tw-gap-2 tw-mt-8">
                     {cards.map((_, index) => (
                         <div
                             key={index}
@@ -129,7 +129,7 @@ export default function FeatureBox() {
                 {cards.map((card, index) => {
                     const Icon = card.icon;
                     return (
-                        <div key={index} className="tw-bg-white tw-rounded-lg tw-p-8 tw-shadow-sm tw-flex tw-flex-col tw-items-center">
+                        <div key={index} className="tw-bg-white tw-rounded-lg tw-p-8 tw-shadow-md tw-flex tw-flex-col tw-items-center">
                             <Icon className="tw-w-12 tw-h-12 tw-text-[#f55204] tw-mb-6" />
                             <h3 className="tw-text-xl tw-font-bold tw-text-gray-800 tw-mb-6">{card.title}</h3>
                             <ul className="tw-space-y-4 tw-w-full">

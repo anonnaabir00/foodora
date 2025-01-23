@@ -2326,6 +2326,13 @@ body {
   object-fit: cover;
 }
 
+@media only screen and (max-width: 600px) {
+  .item-image img {
+    width: 74px; /* Fixed width */
+    height: 74px; /* Fixed height */
+  }
+}
+
 .menu-grid {
   display: inline-block;
   gap: 20px;
@@ -2333,6 +2340,13 @@ body {
 
 .custom-tab {
   font-size: 16px;
+}
+
+@media only screen and (max-width: 600px) {
+  .custom-tab {
+    font-size: 12px;
+    font-weight: 500;
+  }
 }
 
 .ant-tabs-tab-btn {

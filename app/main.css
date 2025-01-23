@@ -30,6 +30,13 @@ h3{
     line-height: 25px;
     font-weight: 800;
 }
+
+@media only screen and (max-width: 600px) {
+    h3{
+        font-size: 13px !important;
+        font-weight: 600;
+    }
+}
 h4{
     font-size: 16px;
     line-height: 22px;
@@ -219,6 +226,11 @@ button.log_in:hover{
     padding: 8px 14px;
     font-size: 14px;
     line-height: 20px;
+}
+@media only screen and (max-width: 600px) {
+    .e-search-form button.e-search-submit {
+        top: 14%;
+    }
 }
 .search_field .row{
     align-items: center;
@@ -741,6 +753,13 @@ a.view-botton {
     font-size: 30px;
     font-weight: 700;
 }
+
+@media only screen and (max-width: 600px) {
+    .item-price p span {
+        font-size: 22px;
+        font-weight: 700;
+    }
+}
 .toggle-box{
     padding: 4px 15px 7px 20px;
     border-style: solid;
@@ -1133,6 +1152,11 @@ button.popup-close-btn {
 .cart-items-list {
     padding: 0 20px 20px 20px;
 }
+@media only screen and (max-width: 600px) {
+    .cart-items-list {
+        padding: 0 !important;
+    }
+}
 .cart-items-box .item-details {
     display: flex;
     align-items: center;
@@ -1501,7 +1525,7 @@ form#signin-form button.submit-btn {
         line-height: 14px;
     }
     .e-search-form button.e-search-submit {
-        font-size: 0;
+        font-size: 14px;
     }
     .search_field button.banner_button {
         padding: 10px 25px 11px 25px;
@@ -1538,10 +1562,10 @@ form#signin-form button.submit-btn {
         text-overflow: ellipsis;
         position: relative;
     }
-    .e-search-form button.e-search-submit{
-        padding: 2.5px 5.5px;
-        right: 8px;
-    }
+    /*.e-search-form button.e-search-submit{*/
+    /*    padding: 2.5px 5.5px;*/
+    /*    right: 8px;*/
+    /*}*/
     .container.banner_middle .col-md-7 .heading .search_field .col-md-4{
         padding-top: 10px;
     }
@@ -1549,9 +1573,9 @@ form#signin-form button.submit-btn {
         width: 13px;
         height: 13px;
     }
-    .e-search-input-wrapper input.e-search-input{
-        padding: 11.5px 20px 11.5px 35px;
-    }
+    /*.e-search-input-wrapper input.e-search-input{*/
+    /*    padding: 11.5px 20px 11.5px 35px;*/
+    /*}*/
     .col-md-5.banner-img-wrap img{
         width: 100%;
     }

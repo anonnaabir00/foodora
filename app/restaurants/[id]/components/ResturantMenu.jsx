@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, Drawer, Modal, Radio, Checkbox, Button } from "antd";
 import { addToCart } from './cartUtils';
 import Cart from './Cart';
+import CartBar from "@/app/restaurants/[id]/components/CartBar";
 
 const CustomizeModal = ({ item, visible, onClose, onAddToCart }) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -402,6 +403,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
     })).filter(category => category.items.length > 0);
 
     return (
+        <>
         <div className="container">
             <div className="foot-types">
                 <div className="container foot-type-inner">
@@ -463,8 +465,8 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                         </h2>
                         <div className="row" style={{ marginBottom: '2rem' }}>
                             {category.items.map((item) => (
-                                <div key={item.id} className="col-md-4 item-details"
-                                     style={{marginBottom: '1rem', marginRight: '1rem'}}>
+                                <div key={item.id} className="col-md-4 item-details md:tw-mr-4 sm:tw-mr-0"
+                                     style={{marginBottom: '1rem'}}>
                                     <div className="item-image">
                                         {item.imageId && (
                                             <img
@@ -530,5 +532,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                 />
             </Drawer>
         </div>
+            <CartBar />
+        </>
     );
 }
