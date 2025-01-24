@@ -70,3 +70,31 @@ export const updateQuantity = (itemId, newQuantity) => {
 export const clearCart = () => {
     localStorage.removeItem('cartItems');
 };
+
+// Add these functions to cartUtils.js
+
+// Save discount state to localStorage
+export const saveDiscountState = (isApplied, discountAmount) => {
+    try {
+        localStorage.setItem('discountState', JSON.stringify({
+            isApplied,
+            amount: discountAmount
+        }));
+    } catch (error) {
+        console.error('Error saving discount state:', error);
+    }
+};
+
+export const getDiscountState = () => {
+    try {
+        const discountState = localStorage.getItem('discountState');
+        return discountState ? JSON.parse(discountState) : { isApplied: false, amount: 0 };
+    } catch {
+        return { isApplied: false, amount: 0 };
+    }
+};
+
+export const clearDiscountState = () => {
+    localStorage.removeItem('discountState');
+};
+

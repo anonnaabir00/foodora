@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
+import {getCartItems, getDiscountState} from "@/app/restaurants/[id]/components/cartUtils";
 
 export default function Checkout() {
     const [cartItems, setCartItems] = useState([]);
@@ -20,9 +21,11 @@ export default function Checkout() {
         total: 0
     });
 
+
     useEffect(() => {
-        // Load cart items from localStorage
-        const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        // Load cart items and discount state from utils
+        const items = getCartItems();
+        const { isApplied, amount } = getDiscountState();
         setCartItems(items);
 
         // Calculate order summary
@@ -31,14 +34,17 @@ export default function Checkout() {
             return sum + (itemPrice * item.quantity);
         }, 0);
 
+        // Calculate total with discount and shipping
+        const total = (subtotal - (isApplied ? amount : 0)) + 40;
+
         setOrderSummary({
             subtotal,
             shipping: 40,
-            discount: 0,
-            total: subtotal + 40
+            discount: isApplied ? amount : 0,
+            total
         });
 
-        // Load user data from cookies
+        // Load user data from cookies (keep your existing cookie logic)
         const userData = Cookies.get('userData');
         if (userData) {
             try {
@@ -57,6 +63,7 @@ export default function Checkout() {
             }
         }
     }, []);
+
 
     const handleSubmit = (e) => {
         e.preventDefault();

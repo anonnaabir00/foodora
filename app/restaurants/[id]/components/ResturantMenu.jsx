@@ -363,11 +363,6 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
 
     const isMobile = useScreenSize();
 
-    const isItemInCart = (itemId) => {
-        const cartItems = getCartItems();
-        return cartItems.some(item => (item.cartItemId || item.id) === itemId);
-    };
-
     useEffect(() => {
         const cartItems = getCartItems();
         const initialQuantities = {};
@@ -407,22 +402,60 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
         }
     };
 
+    // const handleQuantityChange = (itemId, newQuantity) => {
+    //     if (newQuantity < 1) {
+    //         updateQuantity(itemId, 0);
+    //         removeFromCart(itemId);
+    //         setItemQuantities(prev => {
+    //             const updatedQuantities = { ...prev };
+    //             delete updatedQuantities[itemId];
+    //             return updatedQuantities;
+    //         });
+    //         setCartUpdated(prev => !prev);
+    //     } else {
+    //         setItemQuantities(prev => ({ ...prev, [itemId]: newQuantity }));
+    //         updateQuantity(itemId, newQuantity);
+    //         setCartUpdated(prev => !prev);
+    //     }
+    // };
+
     const handleQuantityChange = (itemId, newQuantity) => {
+        const cartItems = getCartItems();
+        const baseId = itemId.toString();
+
+        // Find the specific item in cart
+        const cartItem = cartItems.find(item => {
+            const cartItemId = item.cartItemId || item.id;
+            return cartItemId === baseId || cartItemId.startsWith(`${baseId}-`);
+        });
+
+        if (!cartItem) return;
+
         if (newQuantity < 1) {
-            updateQuantity(itemId, 0);
-            removeFromCart(itemId);
+            removeFromCart(cartItem.cartItemId || cartItem.id);
             setItemQuantities(prev => {
-                const updatedQuantities = { ...prev };
-                delete updatedQuantities[itemId];
-                return updatedQuantities;
+                const updated = { ...prev };
+                delete updated[baseId];
+                return updated;
             });
-            setCartUpdated(prev => !prev);
         } else {
-            setItemQuantities(prev => ({ ...prev, [itemId]: newQuantity }));
-            updateQuantity(itemId, newQuantity);
-            setCartUpdated(prev => !prev);
+            updateQuantity(cartItem.cartItemId || cartItem.id, newQuantity);
+            setItemQuantities(prev => ({ ...prev, [baseId]: newQuantity }));
         }
+
+        setCartUpdated(prev => !prev);
     };
+
+    // const handleCustomizedAddToCart = (customizedItem) => {
+    //     const baseId = customizedItem.id.toString();
+    //     addToCart({
+    //         ...customizedItem,
+    //         quantity: itemQuantities[baseId] || 1
+    //     });
+    //     setIsCartVisible(true);
+    //     setCartUpdated(prev => !prev);
+    //     setCustomizeModalVisible(false);
+    // };
 
     const handleCustomizedAddToCart = (customizedItem) => {
         addToCart(customizedItem);
@@ -444,6 +477,20 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
         setCustomizeModalVisible(true); // Open the customization modal
     };
 
+    // const isItemInCart = (itemId) => {
+    //     const cartItems = getCartItems();
+    //     return cartItems.some(item => item.id === itemId || item.cartItemId?.startsWith(itemId));
+    // };
+
+    const isItemInCart = (itemId) => {
+        const cartItems = getCartItems();
+        const searchId = itemId.toString();
+        return cartItems.some(item => {
+            const cartItemId = item.cartItemId || item.id;
+            return cartItemId === searchId || cartItemId.startsWith(`${searchId}-`);
+        });
+    };
+
     const getFilteredItems = (items) => {
         if (!showVeg && !showNonVeg) return items; // Show all items if no filter is selected
         return items.filter(item => {
@@ -458,6 +505,32 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
         ...category,
         items: getFilteredItems(category.items)
     })).filter(category => category.items.length > 0);
+
+    const renderQuantitySelector = (item) => {
+        const baseId = item.id.toString();
+        const cartItems = getCartItems();
+        const cartItem = cartItems.find(ci => {
+            const ciId = ci.cartItemId || ci.id;
+            return ciId === baseId || ciId.startsWith(`${baseId}-`);
+        });
+
+        if (cartItem) {
+            return (
+                <div className="quantity-selector">
+                    <button onClick={() => handleQuantityChange(cartItem.cartItemId || cartItem.id, cartItem.quantity - 1)}>-</button>
+                    <span>{cartItem.quantity}</span>
+                    <button onClick={() => handleQuantityChange(cartItem.cartItemId || cartItem.id, cartItem.quantity + 1)}>+</button>
+                </div>
+            );
+        }
+
+        return (
+            <a href="#" onClick={(e) => {
+                e.preventDefault();
+                handleAddToCart(item);
+            }}>Add</a>
+        );
+    };
 
     return (
         <>
@@ -544,22 +617,7 @@ export default function RestaurantMenu({ menuData, restaurantInfo }) {
                                                 <p>
                                                     <span><sup>₹</sup>{item.price}</span>
                                                 </p>
-                                                {(itemQuantities[item.cartItemId] || itemQuantities[item.id]) ? (
-                                                    <div className="quantity-selector">
-                                                        <button
-                                                            onClick={() => handleQuantityChange(item.cartItemId || item.id, (itemQuantities[item.cartItemId] || itemQuantities[item.id]) - 1)}>-
-                                                        </button>
-                                                        <span>{itemQuantities[item.cartItemId] || itemQuantities[item.id]}</span>
-                                                        <button
-                                                            onClick={() => handleQuantityChange(item.cartItemId || item.id, (itemQuantities[item.cartItemId] || itemQuantities[item.id]) + 1)}>+
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <a href="#" onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleAddToCart(item);
-                                                    }}>Add</a>
-                                                )}
+                                                {renderQuantitySelector(item)}
                                             </div>
                                         </div>
                                     </div>
